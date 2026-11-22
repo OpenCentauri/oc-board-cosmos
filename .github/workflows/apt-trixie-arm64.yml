@@ -1,165 +1,57 @@
-name: Trixie arm64 apt
-
+name: Shared Trixie arm64 package build
 on:
-  push:
-    branches: [main]
-  pull_request:
-  workflow_dispatch:
-  schedule:
-    - cron: '0 6 * * *'
-
+  workflow_call:
+    inputs:
+      channel:
+        required: true
+        type: string
 permissions:
-  contents: read
-
-concurrency:
-  group: trixie-arm64-${{ github.ref_name }}
-  cancel-in-progress: true
-
+  contents: write
+  packages: write
 jobs:
-  builder-image:
+  build:
     runs-on: ubuntu-24.04-arm
-    permissions:
-      contents: read
-      packages: write
-    outputs:
-      image: ${{ steps.meta.outputs.image }}
+    concurrency:
+      group: apt-channel-build-and-publication
+      cancel-in-progress: false
     steps:
-      - name: Decide whether the builder image is current
-        id: meta
+      - uses: actions/checkout@v5
+      - name: Load published channel markers
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          if gh api "repos/$GITHUB_REPOSITORY/branches/gh-pages" >/dev/null 2>&1; then
+            git fetch origin gh-pages:refs/remotes/origin/gh-pages
+          fi
+      - name: Select eligible Cosmos revision
+        id: source
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          set -euo pipefail
-          image="ghcr.io/${GITHUB_REPOSITORY,,}:builder"
-          echo "image=$image" >> "$GITHUB_OUTPUT"
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends curl jq ca-certificates
-
-          registry_token() {
-            scope=$1
-            basic=$(printf 'x-access-token:%s' "$GITHUB_TOKEN" | base64 -w0)
-            curl -fsSL \
-              -H "Authorization: Basic ${basic}" \
-              "https://ghcr.io/token?service=ghcr.io&scope=${scope}" \
-              | jq -r .token
-          }
-          manifest_digest() {
-            repository=$1
-            tag=$2
-            token=$3
-            curl -fsSI \
-              -H "Authorization: Bearer ${token}" \
-              -H "Accept: application/vnd.oci.image.index.v1+json, application/vnd.docker.distribution.manifest.list.v2+json" \
-              "https://ghcr.io/v2/${repository}/manifests/${tag}" \
-              | awk 'tolower($1)=="docker-content-digest:" { gsub("\r", "", $2); print $2 }'
-          }
-          config_label() {
-            repository=$1
-            digest=$2
-            label=$3
-            token=$4
-            config=$(curl -fsSL \
-              -H "Authorization: Bearer ${token}" \
-              -H "Accept: application/vnd.oci.image.manifest.v1+json" \
-              "https://ghcr.io/v2/${repository}/manifests/${digest}" \
-              | jq -r '.config.digest')
-            curl -fsSL \
-              -H "Authorization: Bearer ${token}" \
-              "https://ghcr.io/v2/${repository}/blobs/${config}" \
-              | jq -r --arg label "$label" '.config.Labels[$label] // empty'
-          }
-
-          dockerfile_sha=$(curl -fsSL \
-            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
-            -H "Accept: application/vnd.github.raw+json" \
-            "https://api.github.com/repos/${GITHUB_REPOSITORY}/contents/Dockerfile?ref=${GITHUB_SHA}" \
-            | sha256sum | awk '{print $1}')
-          base_token=$(registry_token "repository:armbian/docker-armbian-build:pull")
-          base_digest=$(manifest_digest armbian/docker-armbian-build armbian-debian-trixie-latest "$base_token")
-          test -n "$base_digest"
-          echo "Dockerfile sha: $dockerfile_sha"
-          echo "Base digest: $base_digest"
-
-          need=true
-          builder_token=$(registry_token "repository:${GITHUB_REPOSITORY,,}:pull")
-          if builder_digest=$(manifest_digest "${GITHUB_REPOSITORY,,}" builder "$builder_token"); then
-            have=$(config_label "${GITHUB_REPOSITORY,,}" "$builder_digest" org.opencontainers.image.base.digest "$builder_token")
-            have_dockerfile=$(config_label "${GITHUB_REPOSITORY,,}" "$builder_digest" org.opencontainers.image.dockerfile.sha "$builder_token")
-            echo "Published base digest: $have"
-            echo "Published Dockerfile sha: $have_dockerfile"
-            if [ "$have" = "$base_digest" ] && [ "$have_dockerfile" = "$dockerfile_sha" ]; then
-              need=false
-            fi
-          else
-            echo "Builder image is not published yet"
-          fi
-          echo "base_digest=$base_digest" >> "$GITHUB_OUTPUT"
-          echo "dockerfile_sha=$dockerfile_sha" >> "$GITHUB_OUTPUT"
-          echo "need_image=$need" >> "$GITHUB_OUTPUT"
-
-      - uses: actions/checkout@v5
-        if: steps.meta.outputs.need_image == 'true'
-
+          APT_CHANNEL: ${{ inputs.channel }}
+        run: python3 scripts/select-channel.py
       - uses: docker/login-action@v4
-        if: steps.meta.outputs.need_image == 'true'
+        if: steps.source.outputs.build == 'true'
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and push builder image
-        if: steps.meta.outputs.need_image == 'true'
-        run: |
-          set -euo pipefail
-          docker build \
-            --build-arg "BASE_DIGEST=${{ steps.meta.outputs.base_digest }}" \
-            --label "org.opencontainers.image.dockerfile.sha=${{ steps.meta.outputs.dockerfile_sha }}" \
-            --tag "${{ steps.meta.outputs.image }}" \
-            .
-          docker push "${{ steps.meta.outputs.image }}"
-
-  debs:
-    needs: builder-image
-    runs-on: ubuntu-24.04-arm
-    permissions:
-      contents: write
-      packages: read
-    steps:
-      - uses: actions/checkout@v5
-
-      - uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Record cosmos main
-        id: cosmos
-        run: |
-          sha=$(git ls-remote https://github.com/OpenCentauri/cosmos.git refs/heads/main | awk '{print $1}')
-          test -n "$sha"
-          echo "sha=$sha" >> "$GITHUB_OUTPUT"
-          echo "Cosmos main: $sha"
-
-      - name: Skip unchanged cosmos SHA
-        id: preflight
-        run: |
-          url="https://opencentauri.github.io/oc-board-cosmos/trixie/arm64/cosmos-sha"
-          previous=$(curl -fsSL "$url" || true)
-          if [ "$previous" = "${{ steps.cosmos.outputs.sha }}" ] && [ "${{ github.event_name }}" != "workflow_dispatch" ] && [ "${{ github.event_name }}" != "push" ]; then
-            echo "needs_build=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "needs_build=true" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Build packages and stage archive
-        if: steps.preflight.outputs.needs_build == 'true'
+      - name: Refresh builder when inputs change
+        if: steps.source.outputs.build == 'true'
+        id: image
+        run: bash scripts/build-builder.sh
+      - name: Build packages and stage channel
+        if: steps.source.outputs.build == 'true'
         env:
-          BUILDER_IMAGE: ${{ needs.builder-image.outputs.image }}
-        run: bash scripts/build-debs.sh "${{ steps.cosmos.outputs.sha }}"
-
-      - name: Publish GitHub Pages
-        if: steps.preflight.outputs.needs_build == 'true' && github.event_name != 'pull_request'
+          BUILDER_IMAGE: ${{ steps.image.outputs.image }}
+          APT_CHANNEL: ${{ inputs.channel }}
+          COSMOS_SHA: ${{ steps.source.outputs.sha }}
+          COSMOS_RELEASE_ID: ${{ steps.source.outputs.release_id }}
+          COSMOS_RELEASE_TAG: ${{ steps.source.outputs.tag }}
+          PACKAGE_BUILD_NUMBER: ${{ github.run_number }}
+        run: bash scripts/build-debs.sh "$COSMOS_SHA"
+      - name: Publish channel without replacing other channels
+        if: steps.source.outputs.build == 'true'
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}

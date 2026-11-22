@@ -1,0 +1,17 @@
+name: Release packages
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '30 6 * * *'
+permissions:
+  contents: write
+  packages: write
+concurrency:
+  group: release-packages
+  cancel-in-progress: false
+jobs:
+  build:
+    uses: ./.github/workflows/apt-trixie-arm64.yml
+    with:
+      channel: release
+    secrets: inherit

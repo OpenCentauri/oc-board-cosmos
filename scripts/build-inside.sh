@@ -1,13 +1,15 @@
 #!/bin/bash
 set -euo pipefail
 
-# Resolve all sources from the checked-out Cosmos revision.
 python3 "$(dirname "$0")/fetch-cosmos-pins.py" \
   kalico moonraker grumpyscreen fluidd mainsail ustreamer \
   /cosmos/meta-opencentauri
 python3 "$(dirname "$0")/fetch-mcu-flasher.py" /cosmos/meta-opencentauri
 
-version_suffix="+git${COSMOS_SHA:0:12}~trixie1"
+channel=${APT_CHANNEL:-nightly}
+number=${PACKAGE_BUILD_NUMBER:-0}
+case "$channel" in nightly|release) ;; *) exit 1 ;; esac
+version_suffix="+${channel}.${number}.git${COSMOS_SHA:0:12}~trixie1"
 shopt -s nullglob
 
 package_version() {
