@@ -1,0 +1,12 @@
+Source: python3-preprocess-cancellation
+Section: python
+Priority: optional
+Maintainer: OpenCentauri Project <noreply@opencentauri.github.io>
+Build-Depends: debhelper-compat (= 13), dh-python, python3-all, python3-setuptools, python3-wheel
+Standards-Version: 4.7.0
+
+Package: python3-preprocess-cancellation
+Architecture: all
+Depends: ${misc:Depends}, ${python3:Depends}
+Description: Cancellation helpers for Python asynchronous code
+ Provides cancellation preprocessing helpers used by Moonraker.

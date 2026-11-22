@@ -6,6 +6,8 @@ python3 "$(dirname "$0")/fetch-cosmos-pins.py" \
   /cosmos/meta-opencentauri
 python3 "$(dirname "$0")/fetch-mcu-flasher.py" /cosmos/meta-opencentauri
 python3 "$(dirname "$0")/fetch-flashtool.py" /cosmos/meta-opencentauri
+python3 "$(dirname "$0")/fetch-python-deps.py"
+cp /tmp/custom-python-deps/*.deb /src/out/
 
 channel=${APT_CHANNEL:-nightly}
 number=${PACKAGE_BUILD_NUMBER:-0}

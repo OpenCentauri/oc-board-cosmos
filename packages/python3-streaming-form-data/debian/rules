@@ -1,0 +1,16 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@ --with python3
+
+override_dh_auto_clean:
+	dh_clean
+
+override_dh_auto_build:
+	rm -rf /tmp/streaming-form-data-wheel
+	mkdir -p /tmp/streaming-form-data-wheel
+	python3 -c 'import setuptools.build_meta as b; b.build_wheel("/tmp/streaming-form-data-wheel")'
+
+override_dh_auto_install:
+	install -d debian/python3-streaming-form-data/usr/lib/python3/dist-packages
+	unzip -q /tmp/streaming-form-data-wheel/*.whl -d debian/python3-streaming-form-data/usr/lib/python3/dist-packages

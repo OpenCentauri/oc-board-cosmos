@@ -1,0 +1,14 @@
+Source: python3-apprise
+Section: python
+Priority: optional
+Maintainer: OpenCentauri Project <noreply@opencentauri.github.io>
+Build-Depends: debhelper-compat (= 13), dh-python, python3-all, python3-setuptools, python3-wheel
+Standards-Version: 4.7.0
+
+Package: python3-apprise
+Architecture: all
+Depends: ${misc:Depends}, ${python3:Depends}, python3-requests,
+ python3-requests-oauthlib, python3-yaml, python3-click, python3-markdown,
+ python3-certifi
+Description: Multi-platform notification library for Python 3
+ Notification library required by Moonraker.
