@@ -2,7 +2,7 @@
 set -euo pipefail
 
 python3 "$(dirname "$0")/fetch-cosmos-pins.py" \
-  kalico moonraker grumpyscreen fluidd mainsail ustreamer \
+  kalico moonraker grumpyscreen fluidd mainsail ustreamer afc tmc-autotune \
   /cosmos/meta-opencentauri
 python3 "$(dirname "$0")/fetch-mcu-flasher.py" /cosmos/meta-opencentauri
 python3 "$(dirname "$0")/fetch-flashtool.py" /cosmos/meta-opencentauri
@@ -32,6 +32,6 @@ build_pkg() {
   cp "$parent/"*.deb /src/out/
 }
 
-for name in fluidd mainsail moonraker klipper grumpyscreen ustreamer mcu-flasher flashtool cosmos; do
+for name in fluidd mainsail moonraker klipper grumpyscreen ustreamer afc tmc-autotune mcu-flasher flashtool cosmos; do
   build_pkg "$name"
 done

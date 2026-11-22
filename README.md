@@ -13,10 +13,12 @@ This repository checks out [OpenCentauri/cosmos](https://github.com/OpenCentauri
 | `moonraker` | Moonraker plus the Cosmos patches under `recipes-apps/moonraker/files`. |
 | `fluidd` | Static web UI. |
 | `mainsail` | Static web UI. |
-| `cosmos` | Metapackage depending on the five packages above. |
+| `afc` | AFC-Klipper-Add-On extras and Cosmos readonly configuration files. |
+| `tmc-autotune` | TMC stepper autotuning extra and motor database. |
+| `cosmos` | Metapackage depending on the packages above. |
 
 Python dependencies are declared on the packages that consume them:
-`klipper` and `moonraker`. Moonraker also declares `curl`, because the
+`klipper`, `afc`, `tmc-autotune`, and `moonraker`. Moonraker also declares `curl`, because the
 selected upstream recipe and startup/update paths use it. Trixie packages
 are used for modules already in the Trixie index. The custom Debian binary
 packages `python3-inotify-simple`, `python3-preprocess-cancellation`,
@@ -46,4 +48,4 @@ The archive is unsigned for now. `trusted=yes` is required.
 
 ## Rebuilds
 
-GitHub Actions polls `OpenCentauri/cosmos` `main` daily and also runs on `workflow_dispatch` and pushes to this repository. A publish is skipped when the recorded Cosmos SHA has not changed.
+GitHub Actions polls `OpenCentauri/cosmos` `main` daily and also runs on `workflow_dispatch` and pushes to this repository. A publish is skipped only when both the recorded Cosmos SHA and a fingerprint of the packaging inputs are unchanged.

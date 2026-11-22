@@ -7,6 +7,32 @@ import re
 import subprocess
 import urllib.error
 import urllib.request
+import hashlib
+import pathlib
+
+
+def packaging_fingerprint():
+    """Fingerprint repository inputs that affect generated Debian packages."""
+    root = pathlib.Path(__file__).resolve().parents[1]
+    digest = hashlib.sha256()
+    paths = [
+        root / 'Dockerfile',
+        root / 'scripts/fetch-cosmos-pins.py',
+        root / 'scripts/build-inside.sh',
+        root / 'scripts/build-debs.sh',
+        root / 'scripts/stage-apt.sh',
+        root / 'scripts/select-channel.py',
+    ]
+    paths += sorted((root / 'packages').glob('*/debian/**/*'))
+    for path in paths:
+        if path.is_file():
+            digest.update(path.relative_to(root).as_posix().encode())
+            digest.update(b'\0')
+            digest.update(path.read_bytes())
+    return digest.hexdigest()
+
+
+fingerprint = packaging_fingerprint()
 
 channel = os.environ['APT_CHANNEL']
 if channel not in ('nightly', 'release'):
@@ -24,8 +50,10 @@ def resolve(ref):
     return sha
 
 
-def nightly_should_build(sha, previous, event_name):
-    return previous.get('sha') != sha or event_name in ('push', 'workflow_dispatch')
+def nightly_should_build(sha, previous, event_name, fingerprint):
+    return (previous.get('sha') != sha
+            or previous.get('packaging_fingerprint') != fingerprint
+            or event_name in ('push', 'workflow_dispatch'))
 
 
 def eligible_release(release, previous, cutoff='2026-11-22T12:33:00+00:00',
@@ -40,15 +68,16 @@ def eligible_release(release, previous, cutoff='2026-11-22T12:33:00+00:00',
         return None
     if published <= cutoff:
         return None
-    if str(previous.get('release_id', '')) == release_id:
+    if (str(previous.get('release_id', '')) == release_id
+            and previous.get('packaging_fingerprint') == fingerprint):
         return None
     return release_id
 
 
-outputs = dict(build='false', sha='', release_id='', tag='')
+outputs = dict(build='false', sha='', release_id='', tag='', packaging_fingerprint=fingerprint)
 if channel == 'nightly':
     sha = resolve('refs/heads/main')
-    if nightly_should_build(sha, previous, os.environ['GITHUB_EVENT_NAME']):
+    if nightly_should_build(sha, previous, os.environ['GITHUB_EVENT_NAME'], fingerprint):
         outputs.update(build='true', sha=sha)
 else:
     request = urllib.request.Request('https://api.github.com/repos/OpenCentauri/cosmos/releases/latest', headers={'Authorization': 'Bearer ' + os.environ['GITHUB_TOKEN'], 'Accept': 'application/vnd.github+json', 'User-Agent': 'oc-board-cosmos'})

@@ -1,0 +1,12 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: AFC-Klipper-Add-On
+Source: https://github.com/suchmememanyskill/AFC-Klipper-Add-On
+
+Files: *
+Copyright: AFC-Klipper-Add-On contributors
+License: GPL-3.0-only
+ The upstream source for this package is pinned at
+ 0fd50f2229b685cdb9b84793150ab0798e16eb03 (DEV).
+ .
+ On Debian systems, the complete text of the GNU General Public License
+ version 3 can be found in /usr/share/common-licenses/GPL-3.

@@ -1,0 +1,14 @@
+#!/usr/bin/make -f
+%:
+	dh $@
+
+override_dh_auto_build:
+
+override_dh_auto_install:
+	install -d debian/tmc-autotune/usr/share/klipper/klippy/extras
+	install -m 0644 /upstream/tmc-autotune/autotune_tmc.py \
+		/upstream/tmc-autotune/motor_constants.py \
+		/upstream/tmc-autotune/motor_database.cfg \
+		debian/tmc-autotune/usr/share/klipper/klippy/extras/
+	install -d debian/tmc-autotune/usr/share/doc/tmc-autotune
+	install -m 0644 debian/copyright debian/tmc-autotune/usr/share/doc/tmc-autotune/copyright

@@ -22,6 +22,6 @@ The archives are unsigned: trusted=yes bypasses APT signature verification. Swit
 
 The legacy trixie/arm64 path is retained but frozen. Existing clients must switch to the nightly URL to receive further builds. There is no release APT index before the first eligible publication.
 
-Each channel has its own build.json and cosmos-sha. Versions include channel, workflow run number and Cosmos commit. Old package files may remain on Pages, but current indexes are regenerated from the current build output. Scheduled polling needs no changes in Cosmos upstream; an upstream release event does not directly trigger this repository.
+Each channel has its own build.json and cosmos-sha. Versions include channel, workflow run number and Cosmos commit. build.json also records a packaging fingerprint covering package definitions and build scripts. Changes to packaging therefore rebuild even if the selected Cosmos SHA is unchanged. Old package files may remain on Pages, but current indexes are regenerated from the current build output. Scheduled polling needs no changes in Cosmos upstream; an upstream release event does not directly trigger this repository.
 
 Pull requests do not publish or build the shared image. These channel entry points deliberately have no pull_request trigger.

@@ -46,6 +46,7 @@ jobs:
           BUILDER_IMAGE: ${{ steps.image.outputs.image }}
           APT_CHANNEL: ${{ inputs.channel }}
           COSMOS_SHA: ${{ steps.source.outputs.sha }}
+          PACKAGING_FINGERPRINT: ${{ steps.source.outputs.packaging_fingerprint }}
           COSMOS_RELEASE_ID: ${{ steps.source.outputs.release_id }}
           COSMOS_RELEASE_TAG: ${{ steps.source.outputs.tag }}
           PACKAGE_BUILD_NUMBER: ${{ github.run_number }}
