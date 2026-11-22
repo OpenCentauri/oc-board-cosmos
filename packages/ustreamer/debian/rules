@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 %:
-	dh $@ --with systemd
+	dh $@
 
 override_dh_auto_build:
 	$(MAKE) -C /upstream/ustreamer WITH_SYSTEMD=1
