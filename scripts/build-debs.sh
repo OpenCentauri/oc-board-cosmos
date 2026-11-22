@@ -10,11 +10,11 @@ git -C "$workdir/cosmos" fetch --depth 1 origin "$cosmos_sha"
 git -C "$workdir/cosmos" checkout --detach "$cosmos_sha"
 
 mkdir -p "$root/out"
-# Native arm64 Trixie matches Armbian's Debian 13 userspace. QEMU is provided by the runner.
-docker run --rm --platform linux/arm64 \
+# Native arm64 runner. The image itself is multi-arch; do not request QEMU.
+docker run --rm \
   -v "$root:/src" \
   -v "$workdir/cosmos:/cosmos:ro" \
   -e COSMOS_SHA="$cosmos_sha" \
   -w /src \
-  debian:trixie \
+  ghcr.io/armbian/docker-armbian-build:armbian-debian-trixie-latest \
   bash -euo pipefail /src/scripts/build-inside.sh
