@@ -1,0 +1,12 @@
+Source: flashtool
+Section: electronics
+Priority: optional
+Maintainer: OpenCentauri Project <noreply@opencentauri.github.io>
+Build-Depends: debhelper-compat (= 13), python3, python3-serial
+Standards-Version: 4.7.0
+
+Package: flashtool
+Architecture: all
+Depends: ${misc:Depends}, python3, python3-serial
+Description: Katapult MCU firmware flashing utility
+ Python tool for flashing firmware through the Katapult bootloader.

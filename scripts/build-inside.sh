@@ -5,6 +5,7 @@ python3 "$(dirname "$0")/fetch-cosmos-pins.py" \
   kalico moonraker grumpyscreen fluidd mainsail ustreamer \
   /cosmos/meta-opencentauri
 python3 "$(dirname "$0")/fetch-mcu-flasher.py" /cosmos/meta-opencentauri
+python3 "$(dirname "$0")/fetch-flashtool.py" /cosmos/meta-opencentauri
 
 channel=${APT_CHANNEL:-nightly}
 number=${PACKAGE_BUILD_NUMBER:-0}
@@ -29,6 +30,6 @@ build_pkg() {
   cp "$parent/"*.deb /src/out/
 }
 
-for name in fluidd mainsail moonraker klipper grumpyscreen ustreamer mcu-flasher cosmos; do
+for name in fluidd mainsail moonraker klipper grumpyscreen ustreamer mcu-flasher flashtool cosmos; do
   build_pkg "$name"
 done

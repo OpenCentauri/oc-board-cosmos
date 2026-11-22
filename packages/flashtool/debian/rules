@@ -1,0 +1,16 @@
+#!/usr/bin/make -f
+%:
+	dh $@
+
+override_dh_auto_configure:
+
+override_dh_auto_build:
+
+override_dh_auto_test:
+	python3 /upstream/flashtool/scripts/flashtool.py --help
+
+override_dh_auto_install:
+	install -D -m 0755 /upstream/flashtool/scripts/flashtool.py debian/flashtool/usr/sbin/flashtool
+	install -D -m 0644 /upstream/flashtool/LICENSE debian/flashtool/usr/share/doc/flashtool/copyright
+
+override_dh_auto_clean:
