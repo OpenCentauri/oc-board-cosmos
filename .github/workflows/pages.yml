@@ -1,0 +1,52 @@
+name: Deploy package archive to Pages
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/pages.yml'
+      - 'scripts/gen-index.py'
+  workflow_run:
+    workflows: ['Nightly packages', 'Release packages']
+    types: [completed]
+    branches: [main]
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: package-archive-pages
+  cancel-in-progress: false
+jobs:
+  deploy:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Check out trusted index generator
+        uses: actions/checkout@v5
+        with:
+          ref: main
+          path: source
+          persist-credentials: false
+      - name: Check out complete published archive
+        uses: actions/checkout@v5
+        with:
+          ref: gh-pages
+          path: archive
+          persist-credentials: false
+      - name: Generate Kipware-style listings for all channels
+        run: python3 source/scripts/gen-index.py archive
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - name: Upload complete archive
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: archive
+      - name: Deploy GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
