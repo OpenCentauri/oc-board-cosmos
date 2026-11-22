@@ -4,7 +4,7 @@
 Call it from the builder container:
 
     python3 scripts/fetch-cosmos-pins.py \
-        kalico moonraker grumpyscreen fluidd mainsail \
+        kalico moonraker grumpyscreen fluidd mainsail ustreamer \
         /cosmos/meta-opencentauri
 
 Arguments are recipe names followed by the meta-opencentauri directory.
@@ -148,6 +148,7 @@ def main():
         "grumpyscreen": recipe_version(root, "grumpyscreen"),
         "fluidd": recipe_version(root, "fluidd"),
         "mainsail": recipe_version(root, "mainsail"),
+        "ustreamer": recipe_version(root, "ustreamer"),
         "cosmos": cosmos_version(root),
     }
     with open("/tmp/package-versions", "w") as handle:

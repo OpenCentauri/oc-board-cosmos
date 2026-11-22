@@ -4,7 +4,7 @@ set -euo pipefail
 # Read meta-opencentauri pins, fetch those sources under /upstream, and write
 # /tmp/package-versions. The Python file owns the BitBake parsing.
 python3 "$(dirname "$0")/fetch-cosmos-pins.py" \
-  kalico moonraker grumpyscreen fluidd mainsail \
+  kalico moonraker grumpyscreen fluidd mainsail ustreamer \
   /cosmos/meta-opencentauri
 
 version_suffix="+git${COSMOS_SHA:0:12}~trixie1"
@@ -31,6 +31,6 @@ build_pkg() {
   cp "$parent/"*.deb /src/out/
 }
 
-for name in fluidd mainsail moonraker klipper grumpyscreen cosmos; do
+for name in fluidd mainsail moonraker klipper grumpyscreen ustreamer cosmos; do
   build_pkg "$name"
 done
