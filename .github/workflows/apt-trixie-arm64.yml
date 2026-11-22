@@ -37,8 +37,9 @@ jobs:
 
           registry_token() {
             scope=$1
+            basic=$(printf 'x-access-token:%s' "$GITHUB_TOKEN" | base64 -w0)
             curl -fsSL \
-              -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+              -H "Authorization: Basic ${basic}" \
               "https://ghcr.io/token?service=ghcr.io&scope=${scope}" \
               | jq -r .token
           }
