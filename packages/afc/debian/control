@@ -1,0 +1,14 @@
+Source: afc
+Section: misc
+Priority: optional
+Maintainer: OpenCentauri Project <noreply@opencentauri.github.io>
+Build-Depends: debhelper-compat (= 13), python3
+Standards-Version: 4.7.0
+
+Package: afc
+Architecture: all
+Depends: ${misc:Depends}, klipper, python3
+Description: AFC Klipper Add-On extras
+ Automated Filament Changer extras for Klipper, pinned from the selected
+ OpenCentauri Cosmos checkout. Does not modify the active printer
+ configuration or enable AFC automatically.

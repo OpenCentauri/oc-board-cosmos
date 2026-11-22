@@ -38,8 +38,8 @@ def recipe_files(root, name):
     Called as recipe_files(root, "kalico"). Hyphenated names such as
     kalico-firmware-bed_*.bb do not match.
     """
-    found = glob.glob(os.path.join(root, "recipes-apps", "*", f"{name}_*.bb"))
-    found += glob.glob(os.path.join(root, "recipes-apps", "*", f"{name}_*.inc"))
+    found = glob.glob(os.path.join(root, "recipes-*", "*", f"{name}_*.bb"))
+    found += glob.glob(os.path.join(root, "recipes-*", "*", f"{name}_*.inc"))
     if not found:
         sys.exit(f"no {name}_* recipe under {root}")
     return sorted(found, key=version_key)
@@ -62,7 +62,8 @@ def recipe_text(root, name):
     """
     ordered = recipe_files(root, name)
     recipe = ordered[-1]
-    text = open(recipe).read().replace("\\\n", "")
+    with open(recipe) as handle:
+        text = handle.read().replace("\\\n", "")
     require = re.search(r"^require\s+(\S+)", text, re.M)
     if require and "SRCREV" not in text:
         inc = os.path.join(os.path.dirname(recipe), require.group(1))
@@ -87,6 +88,9 @@ def fetch_git(root, name):
     print(f"pin {name}: {version} https://{uri.group(1)} @ {rev.group(1)}", flush=True)
     subprocess.check_call(["git", "clone", f"https://{uri.group(1)}", dest])
     subprocess.check_call(["git", "-C", dest, "checkout", "--detach", rev.group(1)])
+    got = subprocess.check_output(["git", "-C", dest, "rev-parse", "HEAD"], text=True).strip()
+    if got.lower() != rev.group(1).lower():
+        sys.exit(f"{name} revision mismatch: got {got}, expected {rev.group(1)}")
     if name == "grumpyscreen":
         subprocess.check_call(["git", "-C", dest, "submodule", "update", "--init", "--recursive"])
     files_dir = os.path.join(os.path.dirname(recipe), "files")
@@ -149,6 +153,8 @@ def main():
         "fluidd": recipe_version(root, "fluidd"),
         "mainsail": recipe_version(root, "mainsail"),
         "ustreamer": recipe_version(root, "ustreamer"),
+        "afc": recipe_version(root, "afc"),
+        "tmc-autotune": recipe_version(root, "tmc-autotune"),
         "cosmos": cosmos_version(root),
     }
     with open("/tmp/package-versions", "w") as handle:

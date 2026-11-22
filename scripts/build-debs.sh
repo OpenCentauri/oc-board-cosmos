@@ -19,6 +19,7 @@ docker run --rm \
   -v "$root:/src" \
   -v "$workdir/cosmos:/cosmos:ro" \
   -e COSMOS_SHA="$cosmos_sha" \
+  -e PACKAGING_FINGERPRINT="${PACKAGING_FINGERPRINT:-}" \
   -e APT_CHANNEL="$APT_CHANNEL" \
   -e PACKAGE_BUILD_NUMBER="${PACKAGE_BUILD_NUMBER:-0}" \
   -w /src "$image" \
@@ -29,5 +30,6 @@ docker run --rm \
   -e APT_CHANNEL="$APT_CHANNEL" \
   -e COSMOS_RELEASE_ID="${COSMOS_RELEASE_ID:-}" \
   -e COSMOS_RELEASE_TAG="${COSMOS_RELEASE_TAG:-}" \
+  -e PACKAGING_FINGERPRINT="${PACKAGING_FINGERPRINT:-}" \
   -w /src "$image" \
   sh /src/scripts/stage-apt.sh "$cosmos_sha"

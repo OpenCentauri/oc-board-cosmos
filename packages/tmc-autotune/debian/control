@@ -1,0 +1,14 @@
+Source: tmc-autotune
+Section: misc
+Priority: optional
+Maintainer: OpenCentauri Project <noreply@opencentauri.github.io>
+Build-Depends: debhelper-compat (= 13), python3
+Standards-Version: 4.7.0
+
+Package: tmc-autotune
+Architecture: all
+Depends: ${misc:Depends}, klipper, python3
+Description: TMC stepper driver autotuning extra
+ TMC stepper driver autotuning Klipper extra and motor database, pinned
+ from the selected OpenCentauri Cosmos checkout. This package does not
+ modify active printer settings or enable autotuning automatically.
