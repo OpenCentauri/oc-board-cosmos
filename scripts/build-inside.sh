@@ -27,6 +27,8 @@ def recipe_text(name):
     text = open(recipe).read().replace("\\\n", "")
     require = re.search(r"^require\s+(\S+)", text, re.M)
     if require and "SRCREV" not in text:
+        sys.exit("require handling uses the recipe directory of the selected file")
+    if require and "SRCREV" not in text:
         inc = os.path.join(os.path.dirname(recipe), require.group(1))
         if os.path.exists(inc):
             text += "\n" + open(inc).read().replace("\\\n", "")
@@ -52,7 +54,7 @@ def fetch_git(name):
 
 def fetch_zip(name):
     recipe, text, version = recipe_text(name)
-    uri = re.search(r"https://[^\s\"]+", text)
+    uri = re.search(r"https://[^;\s\"]+\.zip", text)
     digest = re.search(r'SRC_URI\[sha256sum\]\s*=\s*"([0-9a-fA-F]+)"', text)
     if not uri or not digest:
         sys.exit(f"missing release zip pin in {recipe}")
@@ -63,7 +65,7 @@ def fetch_zip(name):
     subprocess.check_call(["curl", "-fsSL", "-o", archive, url])
     got = hashlib.sha256(open(archive, "rb").read()).hexdigest()
     if got != digest.group(1):
-        sys.exit(f"{name} sha256 mismatch: {got}")
+        sys.exit(f"{name} sha256 mismatch for {url}: {got} != {digest.group(1)}")
     os.makedirs(dest, exist_ok=True)
     subprocess.check_call(["unzip", "-q", archive, "-d", dest])
 
