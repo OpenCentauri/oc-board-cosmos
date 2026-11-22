@@ -9,17 +9,75 @@ on:
     - cron: '0 6 * * *'
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: trixie-arm64-${{ github.ref_name }}
   cancel-in-progress: true
 
 jobs:
-  build:
+  builder-image:
     runs-on: ubuntu-24.04-arm
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      image: ${{ steps.meta.outputs.image }}
     steps:
       - uses: actions/checkout@v4
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Decide whether the builder image is current
+        id: meta
+        run: |
+          set -euo pipefail
+          base=ghcr.io/armbian/docker-armbian-build:armbian-debian-trixie-latest
+          image="ghcr.io/${GITHUB_REPOSITORY,,}:builder"
+          echo "image=$image" >> "$GITHUB_OUTPUT"
+          docker pull "$base"
+          base_digest=$(docker image inspect --format '{{index .RepoDigests 0}}' "$base" | awk -F@ '{print $2}')
+          echo "Base digest: $base_digest"
+          need=true
+          if docker pull "$image"; then
+            have=$(docker image inspect --format '{{ index .Config.Labels "org.opencontainers.image.base.digest" }}' "$image")
+            echo "Published base digest: $have"
+            if [ "$have" = "$base_digest" ]; then
+              need=false
+            fi
+          else
+            echo "Builder image is not published yet"
+          fi
+          echo "base_digest=$base_digest" >> "$GITHUB_OUTPUT"
+          echo "need_image=$need" >> "$GITHUB_OUTPUT"
+
+      - name: Build and push builder image
+        if: steps.meta.outputs.need_image == 'true'
+        run: |
+          set -euo pipefail
+          docker build \
+            --build-arg "BASE_DIGEST=${{ steps.meta.outputs.base_digest }}" \
+            --tag "${{ steps.meta.outputs.image }}" \
+            .
+          docker push "${{ steps.meta.outputs.image }}"
+
+  debs:
+    needs: builder-image
+    runs-on: ubuntu-24.04-arm
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Record cosmos main
         id: cosmos
@@ -42,6 +100,8 @@ jobs:
 
       - name: Build packages
         if: steps.preflight.outputs.needs_build == 'true'
+        env:
+          BUILDER_IMAGE: ${{ needs.builder-image.outputs.image }}
         run: bash scripts/build-debs.sh "${{ steps.cosmos.outputs.sha }}"
 
       - name: Install apt archive tools

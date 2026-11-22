@@ -1,12 +1,5 @@
 #!/bin/bash
 set -euo pipefail
-export DEBIAN_FRONTEND=noninteractive
-apt-get update
-apt-get install -y --no-install-recommends \
-  build-essential debhelper devscripts git ca-certificates \
-  python3 python3-setuptools \
-  pkg-config curl unzip patch \
-  libstdc++-14-dev
 
 python3 - kalico moonraker grumpyscreen fluidd mainsail /cosmos/meta-opencentauri <<'PY'
 import glob, hashlib, os, re, subprocess, sys
@@ -23,17 +16,16 @@ def recipe_text(name):
     found += glob.glob(os.path.join(root, "recipes-apps", "*", f"{name}_*.inc"))
     if not found:
         sys.exit(f"no {name}_* recipe under {root}")
-    recipe = sorted(found, key=version_key)[-1]
+    ordered = sorted(found, key=version_key)
+    recipe = ordered[-1]
     text = open(recipe).read().replace("\\\n", "")
     require = re.search(r"^require\s+(\S+)", text, re.M)
-    if require and "SRCREV" not in text:
-        sys.exit("require handling uses the recipe directory of the selected file")
     if require and "SRCREV" not in text:
         inc = os.path.join(os.path.dirname(recipe), require.group(1))
         if os.path.exists(inc):
             text += "\n" + open(inc).read().replace("\\\n", "")
             recipe = inc
-    version = os.path.basename(sorted(found, key=version_key)[-1]).split("_", 1)[1].rsplit(".", 1)[0]
+    version = os.path.basename(ordered[-1]).split("_", 1)[1].rsplit(".", 1)[0]
     return recipe, text, version
 
 def fetch_git(name):
