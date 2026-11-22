@@ -19,3 +19,9 @@ docker run --rm \
   -w /src \
   "$image" \
   bash -euo pipefail /src/scripts/build-inside.sh
+
+docker run --rm \
+  -v "$root:/src" \
+  -w /src \
+  "$image" \
+  sh /src/scripts/stage-apt.sh "$cosmos_sha"

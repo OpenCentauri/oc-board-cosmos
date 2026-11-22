@@ -7,6 +7,7 @@ LABEL org.opencontainers.image.source="https://github.com/OpenCentauri/oc-board-
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
+      apt-utils \
       build-essential \
       debhelper \
       devscripts \

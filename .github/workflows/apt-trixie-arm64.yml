@@ -152,19 +152,11 @@ jobs:
             echo "needs_build=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Build packages
+      - name: Build packages and stage archive
         if: steps.preflight.outputs.needs_build == 'true'
         env:
           BUILDER_IMAGE: ${{ needs.builder-image.outputs.image }}
         run: bash scripts/build-debs.sh "${{ steps.cosmos.outputs.sha }}"
-
-      - name: Install apt archive tools
-        if: steps.preflight.outputs.needs_build == 'true'
-        run: sudo apt-get update && sudo apt-get install -y apt-utils
-
-      - name: Stage apt archive
-        if: steps.preflight.outputs.needs_build == 'true'
-        run: bash scripts/stage-apt.sh "${{ steps.cosmos.outputs.sha }}"
 
       - name: Publish GitHub Pages
         if: steps.preflight.outputs.needs_build == 'true' && github.event_name != 'pull_request'
