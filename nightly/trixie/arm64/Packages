@@ -1,152 +1,152 @@
 Package: cosmos
 Architecture: all
-Version: 26.10.1+nightly.5.git6cd4d687bb86~trixie1
+Version: 26.10.1+nightly.6.git6cd4d687bb86~trixie1
 Priority: optional
 Section: metapackages
 Maintainer: OpenCentauri Project <noreply@opencentauri.github.io>
 Installed-Size: 7
 Depends: klipper, grumpyscreen, moonraker, fluidd, mainsail, ustreamer, mcu-flasher, flashtool
-Filename: ./cosmos_26.10.1+nightly.5.git6cd4d687bb86~trixie1_all.deb
-Size: 1236
-MD5sum: 92994193671702fef68f0598e1f8c6c5
-SHA1: 256564c14b3f6fe403e53ce3a08e29a4f964ee50
-SHA256: 61ca84e6782045cf83fdda053afd4cc70bd5bafd1a871729149939bb66d4a5fb
-SHA512: 74dd94a20c66b41f9b60ab60ad9f9166fc7605ea166cebb1802609c6d8ec0c5575982ff8b378016310c69149dd4ecd956843443ca6d8bc05270dd93dfee8ab94
+Filename: ./cosmos_26.10.1+nightly.6.git6cd4d687bb86~trixie1_all.deb
+Size: 1232
+MD5sum: 32a36c9dde2caae3a36380dd9753ea85
+SHA1: 5cf73471f1eb2dd7ff683e7fdd62ecf5ac8cebfc
+SHA256: b6a44454c2aff407ba620aa049bbb5b72daa2fb4b9686ad80145bd9e63584a86
+SHA512: 70269f757955b886b536c294de8e7c6fe73d5f3b7907173c31dde4559dad706a23d9da6f29d91d3f8839aa410de4a00bd838b3001989c6684fc2f52c66207965
 Description: OpenCentauri Cosmos printer stack
  Metapackage for Kalico (packaged as klipper), GrumpyScreen, Moonraker,
  Fluidd, Mainsail, uStreamer, and the MCU flashing utilities.
 
 Package: flashtool
 Architecture: all
-Version: 1.0.0+nightly.5.git6cd4d687bb86~trixie1
+Version: 1.0.0+nightly.6.git6cd4d687bb86~trixie1
 Priority: optional
 Section: electronics
 Maintainer: OpenCentauri Project <noreply@opencentauri.github.io>
 Installed-Size: 86
 Depends: python3, python3-serial
-Filename: ./flashtool_1.0.0+nightly.5.git6cd4d687bb86~trixie1_all.deb
-Size: 22832
-MD5sum: 0840a6334c753ab24b4c820fccbc3000
-SHA1: eb98a76b88ec48a7db9670365efdd7a7aeb049a1
-SHA256: e2182cf1b0361545efd55b9bd240409de5326db8dd591967e7503574254706e9
-SHA512: eb3855dc87a5a1b08ac0278b91b405af3aa1e78184fd550a06608a7ab459d01e8fd45bd656660a65251124bc854818d0edecff285c6412af116cd391c2c9df06
+Filename: ./flashtool_1.0.0+nightly.6.git6cd4d687bb86~trixie1_all.deb
+Size: 22828
+MD5sum: 29ab4919a8d263d51142a6b9117cb453
+SHA1: 3b7f8305a65a6c2eea28609ae18b23426e14ba07
+SHA256: 48bbad0a678008a44674705598a3288028f51c7be4971ec6a60ad460b79b74a1
+SHA512: 3ee8d8b58fbfe7c84cb359b2c969ef030cef01b329f79a6b43c0ba53c2609992f9bbf96a5f2e56b7aa0b88cdacf6cebc6078969ea0691ac50450ca83bbfbf02e
 Description: Katapult MCU firmware flashing utility
  Python tool for flashing firmware through the Katapult bootloader.
 
 Package: fluidd
 Architecture: all
-Version: 1.37.4+nightly.5.git6cd4d687bb86~trixie1
+Version: 1.37.4+nightly.6.git6cd4d687bb86~trixie1
 Priority: optional
 Section: web
 Maintainer: OpenCentauri Project <noreply@opencentauri.github.io>
 Installed-Size: 12519
-Filename: ./fluidd_1.37.4+nightly.5.git6cd4d687bb86~trixie1_all.deb
-Size: 3273888
-MD5sum: 60c8f6a401a3956a2967b0e5d6aeab2b
-SHA1: 0c06f0e0e9a9a96581820ed8f1c0bfd68cff7e3d
-SHA256: 38d04d31ea574eb8c0e91d3e9b3c41f887462b3c391ed5663c640d81cd65ec84
-SHA512: 164673489b75f4d37f537838c0b975af9e0648c392fbfb1107d43a4a7535dec3e22ab5d34347aad1df729467445b48af62ec1c969b4bf8c49077af3c796190c0
+Filename: ./fluidd_1.37.4+nightly.6.git6cd4d687bb86~trixie1_all.deb
+Size: 3273468
+MD5sum: 916216865788fe6a6a653309c06f6bf0
+SHA1: 231f7336c16915b46fab9cb573e264a76c5acc17
+SHA256: f2c3ca19d1a6219dbc3aaffe2114034c7623907631b2b9b66cb99007f66b457d
+SHA512: f95c6ec567a666e834353b538654e928b933c2074a078cb346490698f3c2e1b8088c65070ff774dda07a9ac357bc12dbe509f559c2cf6545f9d85294eaf30bdd
 Description: Fluidd web interface
 
 Package: grumpyscreen
 Architecture: arm64
-Version: 2.0.0+nightly.5.git6cd4d687bb86~trixie1
+Version: 2.0.0+nightly.6.git6cd4d687bb86~trixie1
 Priority: optional
 Section: misc
 Maintainer: OpenCentauri Project <noreply@opencentauri.github.io>
 Installed-Size: 2967
 Depends: libc6 (>= 2.38), libgcc-s1 (>= 4.5), libstdc++6 (>= 14), klipper, moonraker
-Filename: ./grumpyscreen_2.0.0+nightly.5.git6cd4d687bb86~trixie1_arm64.deb
+Filename: ./grumpyscreen_2.0.0+nightly.6.git6cd4d687bb86~trixie1_arm64.deb
 Size: 817320
-MD5sum: 7ff214db055b40298f2fb86ab8caf2a9
-SHA1: eb6308c344cf053cb6a9fda0e4085b5c9551fb38
-SHA256: 24ae7870d39f65591e5e17c9e1c853d565cfc9a723beda914bc1c2c2fbf34542
-SHA512: ca9d206e96212186a8b6202969a79a5df1e86bfb19508f22c8817d19aed8a7bb5389c48b101b3d9a525e66cb40a5b20e82d7688bd049258cbcaeab74c9213a5f
+MD5sum: b88baae773005ce153e3404088e4b62b
+SHA1: c5f80d6517998812cfe65249f8f7293f22222033
+SHA256: db7541cd7a0190c8e9fb1deec117548b1c19bec97c3b948277d81cedcc7e0c92
+SHA512: 6167ec40db760b8f699642502f29837d23ed7b621a1fcb966fce037104e5cfe5b1d73fb93d35262331efd608a56ca0b9eb605372859b6722c77065e809873586
 Description: GrumpyScreen touch UI
  Native LVGL UI built at the revision pinned by Cosmos.
 
 Package: klipper-dbgsym
 Architecture: arm64
-Version: 2026.02.00+nightly.5.git6cd4d687bb86~trixie1
+Version: 2026.02.00+nightly.6.git6cd4d687bb86~trixie1
 Auto-Built-Package: debug-symbols
 Priority: optional
 Section: debug
 Source: klipper
 Maintainer: OpenCentauri Project <noreply@opencentauri.github.io>
 Installed-Size: 25
-Depends: klipper (= 2026.02.00+nightly.5.git6cd4d687bb86~trixie1)
-Filename: ./klipper-dbgsym_2026.02.00+nightly.5.git6cd4d687bb86~trixie1_arm64.deb
+Depends: klipper (= 2026.02.00+nightly.6.git6cd4d687bb86~trixie1)
+Filename: ./klipper-dbgsym_2026.02.00+nightly.6.git6cd4d687bb86~trixie1_arm64.deb
 Size: 4564
-MD5sum: 484c878d3543c53715b3c91812d4d71d
-SHA1: d3ae92cf39ef3fd1a0466f24f5e1097e02ba2afd
-SHA256: 57361efa49f2b6abf729fc41713760a0bf4659637ac67a13d888c68730371b3b
-SHA512: 1745f07e91ae7261ed8b65387c1d492b716d1a8b222941fad03d56161b8bfd21c8a19dc82c22743a8dd2b69d7fb7e9281f9abc9d4afa5bb578f440f0b67287be
+MD5sum: e2839a9baafdcd59acb1c72d93a4e5db
+SHA1: 6af3de3944a731ed50dfe3a8050ac7bd3528e8ce
+SHA256: 2de68fe2fec2d6574280825b430e12001126aa62e52e3aacb1fe65ad837ef348
+SHA512: 3b74ac91e5d6c996db7b416f501c16328d6002e6e247bf4a41e2e7e2743ac812f1437cd80ef56ff2aa6b3d3bd3dfc3ce40ce3c6b5f473eddb9c71b1eba50c5fd
 Description: debug symbols for klipper
 Build-Ids: 863e0fa9cd3c4a649fc1d66ff4f9be39fc6fc67b
 
 Package: klipper
 Architecture: arm64
-Version: 2026.02.00+nightly.5.git6cd4d687bb86~trixie1
+Version: 2026.02.00+nightly.6.git6cd4d687bb86~trixie1
 Priority: optional
 Section: misc
 Maintainer: OpenCentauri Project <noreply@opencentauri.github.io>
 Installed-Size: 2901
 Depends: libc6 (>= 2.34), python3, python3-cffi, python3-greenlet, python3-jinja2, python3-markupsafe, python3-serial, python3-numpy, python3-can, python3-msgspec
-Filename: ./klipper_2026.02.00+nightly.5.git6cd4d687bb86~trixie1_arm64.deb
-Size: 434376
-MD5sum: ba59a88dc6e68c83939919d118d246cb
-SHA1: c1f0483153e07f024ea7513ac134c40f48538e6a
-SHA256: d1582f39cd45bf842238289817db0d295e82f882f7ec7935e50ae5568863c242
-SHA512: 7d85c161388d228fa65e5822323e20cbf30ef36fc3f87fd3b5a533ac1521969549a7aed7cac49217f963b3c64ea35e8c05c09460239914a9bdb705e5d0e11e2e
+Filename: ./klipper_2026.02.00+nightly.6.git6cd4d687bb86~trixie1_arm64.deb
+Size: 434416
+MD5sum: 40738882b9b5f0202a7925f27139f0d7
+SHA1: 1e379e5ef8e7f7b99e3cc51f8f20c7444f22eaa4
+SHA256: 45f7e3bd82040b4a5116206c0f62216d4685662c63e699614be821eb033c9ff1
+SHA512: c78b109d35eb1e26c19aa18d9d3ee3d9b99eaa25065b57e82be21d77ba76116cff141b0669cb365a49e3446bb2e4b3bf5fb08ff9cf882b8177c15d04399a8796
 Description: Kalico 3D printer host (Klipper package name)
  Host-side Kalico firmware from OpenCentauri Cosmos, installed as klipper.
 
 Package: mainsail
 Architecture: all
-Version: 2.19.0+nightly.5.git6cd4d687bb86~trixie1
+Version: 2.19.0+nightly.6.git6cd4d687bb86~trixie1
 Priority: optional
 Section: web
 Maintainer: OpenCentauri Project <noreply@opencentauri.github.io>
 Installed-Size: 9856
-Filename: ./mainsail_2.19.0+nightly.5.git6cd4d687bb86~trixie1_all.deb
-Size: 2421720
-MD5sum: d48bad7b86e40b5a0b16b6753b5d8557
-SHA1: 34c428d56f1be552ebbff3fbafaea14684837222
-SHA256: 45cff3ad7f80f630da54ef9a459269b037f94571d2274f12e3d811cec42ad5fb
-SHA512: 597618f677ba3d873e07362f03dcd6646b969a5c9aadac1705530ca5b68ed572ce9a97dff1d1fa8303de4b35bfebeb494900f457830e450167726ed2337bd294
+Filename: ./mainsail_2.19.0+nightly.6.git6cd4d687bb86~trixie1_all.deb
+Size: 2422296
+MD5sum: 2ddba81976ac6aa849b74d156adaafd6
+SHA1: d480972f75b6cf1461101a5dda81791a25830dd4
+SHA256: 619fefe1084c79e259d1d7e7c63a7d5b08b86406b87bf59cdb7e12a5a2177a5f
+SHA512: 5ceb883bca9731f49eefd2eb1286ad9f2250cddaa8d9e1917f9283c681c7832906d55d8f27d54abc56733f5ce822cdeb8627c4b7e6eb6d449e423c2cec4bb248
 Description: Mainsail web interface
 
 Package: mcu-flasher
 Architecture: arm64
-Version: 0.1.0+nightly.5.git6cd4d687bb86~trixie1
+Version: 0.1.0+nightly.6.git6cd4d687bb86~trixie1
 Priority: optional
 Section: electronics
 Maintainer: OpenCentauri Project <noreply@opencentauri.github.io>
 Installed-Size: 653
 Depends: libc6 (>= 2.34), libgcc-s1 (>= 4.2), libudev1 (>= 183)
-Filename: ./mcu-flasher_0.1.0+nightly.5.git6cd4d687bb86~trixie1_arm64.deb
-Size: 242012
-MD5sum: 66e5e016ebe8806410e49057c35034f5
-SHA1: d3368cebbd42c114047d0b51cce2807bfc08c105
-SHA256: d2ffa0888f871ea1a935903a94516bc267e7544a93abe536c58dcff78004924b
-SHA512: 2b598a6435fc1723d9a86c8ad15bca8fc7b8198df4e49e91effe9c856357df82028cd131588b93d5ca98a055446325646aea5207a545eee3351f4a6e38f3518e
+Filename: ./mcu-flasher_0.1.0+nightly.6.git6cd4d687bb86~trixie1_arm64.deb
+Size: 242016
+MD5sum: 36009e3f661c6283cd52b635fefb89fd
+SHA1: 9e24c1bdec0df2f7504981e7998b1c7154896053
+SHA256: 7146a0503b70bdb71392c267554ef0600a86b880d07db863a368f7e44a338677
+SHA512: 0e26413b4c09d1c244140201c78867e989be91b5088e3a64d5a040247a8e8091cf848d71e423e746f747cd63275c7d5e33ff79d815aa1ed42d776c5b79dcf5c7
 Description: OpenCentauri MCU bootloader flashing tool
  Rust utility for flashing firmware through Elegoo MCU bootloaders.
 
 Package: moonraker
 Architecture: all
-Version: 0.11.0+nightly.5.git6cd4d687bb86~trixie1
+Version: 0.11.0+nightly.6.git6cd4d687bb86~trixie1
 Priority: optional
 Section: misc
 Maintainer: OpenCentauri Project <noreply@opencentauri.github.io>
 Installed-Size: 1520
 Depends: python3, python3-tornado, python3-serial, python3-serial-asyncio, python3-pil, python3-streaming-form-data, python3-distro, python3-inotify-simple, python3-libnacl, python3-paho-mqtt, python3-zeroconf, python3-preprocess-cancellation, python3-jinja2, python3-dbus-fast, python3-apprise, python3-ldap3, python3-periphery, python3-importlib-metadata, python3-zipp, python3-smart-open, python3-msgspec, python3-uvloop, python3-aiofiles, curl, klipper
-Filename: ./moonraker_0.11.0+nightly.5.git6cd4d687bb86~trixie1_all.deb
-Size: 237324
-MD5sum: ddd0844518f11f57bbe1314c3de101f5
-SHA1: f0ca74c7f99e779f1b6575aaf89c94e452c8194e
-SHA256: 2abd1d1d5370feed8be35834fee3a0fb7c25e14a5b7ec5c6ea6c9d48c6a7e351
-SHA512: f3b8b493bbe8610e5f7c6bc36f415a2f5ffefe304fb39f8e0c9eba8ff2fbe03604ae72ff5f3d5059a5ff1a60ffdebf6ea5a612a2d63909926b9a2aa346f7b56f
+Filename: ./moonraker_0.11.0+nightly.6.git6cd4d687bb86~trixie1_all.deb
+Size: 237416
+MD5sum: 2f1ac7e0cc53a01a5f55965dfdb091e2
+SHA1: dd89bec2949abf4e39d64b281f69649759da5bf8
+SHA256: c2e8ba513b33ca2897c06b9656bcd1f0d5fded276050653678484877e64d9a35
+SHA512: 4720d24b47499d7fab355cbbdae7af7399b4f70e44d3fe43102bc000588b4ce71a385216fdacc189ff2e7363885a77edddfac9d986221797cdadad7640e00dc6
 Description: Moonraker API server with OpenCentauri patches
 
 Package: python3-apprise
@@ -238,37 +238,37 @@ Description: Streaming multipart/form-data parser for Python 3
 
 Package: ustreamer-dbgsym
 Architecture: arm64
-Version: 6.55+nightly.5.git6cd4d687bb86~trixie1
+Version: 6.55+nightly.6.git6cd4d687bb86~trixie1
 Auto-Built-Package: debug-symbols
 Priority: optional
 Section: debug
 Source: ustreamer
 Maintainer: OpenCentauri Project <noreply@opencentauri.github.io>
 Installed-Size: 839
-Depends: ustreamer (= 6.55+nightly.5.git6cd4d687bb86~trixie1)
-Filename: ./ustreamer-dbgsym_6.55+nightly.5.git6cd4d687bb86~trixie1_arm64.deb
+Depends: ustreamer (= 6.55+nightly.6.git6cd4d687bb86~trixie1)
+Filename: ./ustreamer-dbgsym_6.55+nightly.6.git6cd4d687bb86~trixie1_arm64.deb
 Size: 420564
-MD5sum: a055cac1a9ac9c85bbbe71af4b9d539b
-SHA1: 9aa8bb25830e5fb271dae13325dad24d2439584d
-SHA256: 94e592db3ab40047ebad1bee9a8bebd9af0822bd197e2c90d73590090bb7c951
-SHA512: c86904fa71775d63d917b8e886536440c429c3c66bf56f7b3a3e8dc033a13cd2be6647c0b5b538bc0b3067861a98c41e489485dc4b175d96e21de1712344c456
+MD5sum: 12cad14ec1a8b10fe58c1526774ab21d
+SHA1: ffafb26e7b766781189624879795c7fd7d25539a
+SHA256: 9e04239e9c154b23ce221dcad4d46c551eaefbfd817daf5855e82cf28d43848e
+SHA512: 828cc3347211b71483a2da73e51e9d0cde5bca6704d06dd6742d5dc7b50ad2ed5f542be8c6f81fa7b931930a995735b801d14ddcd32b690413ff1c54bad30074
 Description: debug symbols for ustreamer
 Build-Ids: 77d13d5ec94a75f95041b87adb03817461be551d
 
 Package: ustreamer
 Architecture: arm64
-Version: 6.55+nightly.5.git6cd4d687bb86~trixie1
+Version: 6.55+nightly.6.git6cd4d687bb86~trixie1
 Priority: optional
 Section: video
 Maintainer: OpenCentauri Project <noreply@opencentauri.github.io>
 Installed-Size: 472
 Depends: libbsd0 (>= 0.6.0), libc6 (>= 2.38), libevent-2.1-7t64 (>= 2.1.8-stable), libevent-pthreads-2.1-7t64 (>= 2.1.8-stable), libjpeg62-turbo (>= 1.3.1), libsystemd0
-Filename: ./ustreamer_6.55+nightly.5.git6cd4d687bb86~trixie1_arm64.deb
+Filename: ./ustreamer_6.55+nightly.6.git6cd4d687bb86~trixie1_arm64.deb
 Size: 113252
-MD5sum: a853e50e42ac13c056996105847e0f5a
-SHA1: 39e8ec30f9c05cf64d6d98b53b57cd91b80d6413
-SHA256: 0607798935b6a1edccf6fe2e173c43a1594731e8353c5b00224d48cbc43e2bfd
-SHA512: 505519fe06ba95e0f2ccd748c3268b254405fd6bd59a0dacd3bc5b0fdbd1266ae76cb46dacaadd61bd8ba7fff5039f29b67684d0b153a7462cc78ddbb9535051
+MD5sum: 4a00cd80c05a5729d79e5a2293e51bac
+SHA1: e21e616e0e8d990d586c1955203565c75a8087b3
+SHA256: c001a223760ed26ac8939e97a7320e54921234ef8337c4f7fe8e3805724843cb
+SHA512: 1143fa67b2908fad4ab51ba1cd970d5f4a636926891124fbbb643d2be0bbe383bda122b4597e8cdc2c373a58cf017083452f70ee8e84c1a77a4b5b3de3ee85da
 Description: uStreamer MJPEG-HTTP camera streamer
  Lightweight MJPEG streamer for the OpenCentauri printer camera.
 
