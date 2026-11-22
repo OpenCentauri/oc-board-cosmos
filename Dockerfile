@@ -26,6 +26,7 @@ RUN apt-get update \
       python3-all \
       python3-dev \
       python3-wheel \
+      python3-serial \
       python3-setuptools \
       cython3 \
       dh-python \
