@@ -11,6 +11,11 @@ RUN apt-get update \
       build-essential \
       debhelper \
       devscripts \
+      dh-exec \
+      libbsd-dev \
+      libevent-dev \
+      libjpeg-dev \
+      libsystemd-dev \
       quilt \
       git \
       ca-certificates \
