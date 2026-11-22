@@ -23,6 +23,7 @@ RUN apt-get update \
       git \
       ca-certificates \
       python3 \
+      python3-serial \
       python3-setuptools \
       pkg-config \
       curl \
