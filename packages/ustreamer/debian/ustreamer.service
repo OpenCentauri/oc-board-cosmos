@@ -1,0 +1,12 @@
+[Unit]
+Description=uStreamer MJPEG-HTTP streamer
+After=network.target
+ConditionPathExists=/dev/video0
+
+[Service]
+ExecStart=/usr/bin/ustreamer -d /dev/video0 -r 864x480 -c HW -m MJPEG -b 1 -w 1 -f 10 -l --host=0.0.0.0 --allow-origin=*
+Restart=on-failure
+OOMScoreAdjust=1000
+
+[Install]
+WantedBy=multi-user.target

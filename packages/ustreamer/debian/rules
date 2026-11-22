@@ -1,0 +1,15 @@
+#!/usr/bin/make -f
+%:
+	dh $@ --with systemd
+
+override_dh_auto_build:
+	$(MAKE) -C /upstream/ustreamer WITH_SYSTEMD=1
+
+override_dh_auto_install:
+	install -d debian/ustreamer/usr/bin
+	install -m 0755 /upstream/ustreamer/ustreamer debian/ustreamer/usr/bin/ustreamer
+	install -d debian/ustreamer/lib/systemd/system
+	install -m 0644 debian/ustreamer.service debian/ustreamer/lib/systemd/system/ustreamer.service
+
+override_dh_auto_clean:
+	$(MAKE) -C /upstream/ustreamer clean || true
