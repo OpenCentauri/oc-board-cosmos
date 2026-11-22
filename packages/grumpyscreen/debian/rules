@@ -7,7 +7,7 @@ override_dh_auto_build:
 	$(MAKE) -C /upstream/grumpyscreen wpaclient
 	$(MAKE) -C /upstream/grumpyscreen default \
 		GUPPY_SMALL_SCREEN=true COSMOS=true MMU_BACKENDS=afc \
-		LIBS="-lstdc++fs $(CURDIR)/build/lib/libhv.a $(CURDIR)/build/lib/wpaclient.a"
+		LDFLAGS="-lm -L/upstream/grumpyscreen/libhv/lib -l:libhv.a -latomic -lpthread -L/upstream/grumpyscreen/wpa_supplicant/wpa_supplicant -l:libwpa_client.a -lstdc++fs"
 
 override_dh_auto_install:
 	install -d debian/grumpyscreen/usr/bin
