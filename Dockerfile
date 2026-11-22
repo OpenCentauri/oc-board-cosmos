@@ -23,7 +23,12 @@ RUN apt-get update \
       git \
       ca-certificates \
       python3 \
+      python3-all \
+      python3-dev \
+      python3-wheel \
       python3-setuptools \
+      cython3 \
+      dh-python \
       pkg-config \
       curl \
       unzip \

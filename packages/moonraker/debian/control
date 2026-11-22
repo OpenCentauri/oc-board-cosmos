@@ -7,5 +7,12 @@ Standards-Version: 4.7.0
 
 Package: moonraker
 Architecture: all
-Depends: ${misc:Depends}, python3, python3-tornado, python3-serial, python3-pil, python3-jinja2, klipper
+Depends: ${misc:Depends}, python3, python3-tornado, python3-serial,
+ python3-serial-asyncio, python3-pil, python3-streaming-form-data,
+ python3-distro, python3-inotify-simple, python3-libnacl,
+ python3-paho-mqtt, python3-zeroconf, python3-preprocess-cancellation,
+ python3-jinja2, python3-dbus-fast, python3-apprise, python3-ldap3,
+ python3-periphery, python3-importlib-metadata, python3-zipp,
+ python3-smart-open, python3-msgspec, python3-uvloop, python3-aiofiles,
+ curl, klipper
 Description: Moonraker API server with OpenCentauri patches
