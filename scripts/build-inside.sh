@@ -1,23 +1,19 @@
 #!/bin/bash
 set -euo pipefail
 
-# Read meta-opencentauri pins, fetch those sources under /upstream, and write
-# /tmp/package-versions. The Python file owns the BitBake parsing.
+# Resolve all sources from the checked-out Cosmos revision.
 python3 "$(dirname "$0")/fetch-cosmos-pins.py" \
   kalico moonraker grumpyscreen fluidd mainsail ustreamer \
   /cosmos/meta-opencentauri
+python3 "$(dirname "$0")/fetch-mcu-flasher.py" /cosmos/meta-opencentauri
 
 version_suffix="+git${COSMOS_SHA:0:12}~trixie1"
 shopt -s nullglob
 
-# Print the upstream version recorded for a Debian package name.
-# Called as package_version klipper.
 package_version() {
   awk -v name="$1" '$1 == name { print $2 }' /tmp/package-versions
 }
 
-# Build one binary package from packages/<name> and copy the .deb to /src/out.
-# Called as build_pkg fluidd. COSMOS_SHA must be set.
 build_pkg() {
   name=$1
   version=$(package_version "$name")
@@ -31,6 +27,6 @@ build_pkg() {
   cp "$parent/"*.deb /src/out/
 }
 
-for name in fluidd mainsail moonraker klipper grumpyscreen ustreamer cosmos; do
+for name in fluidd mainsail moonraker klipper grumpyscreen ustreamer mcu-flasher cosmos; do
   build_pkg "$name"
 done

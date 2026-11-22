@@ -7,7 +7,7 @@ Standards-Version: 4.7.0
 
 Package: cosmos
 Architecture: all
-Depends: klipper, grumpyscreen, moonraker, fluidd, mainsail, ustreamer
+Depends: klipper, grumpyscreen, moonraker, fluidd, mainsail, ustreamer, mcu-flasher
 Description: OpenCentauri Cosmos printer stack
  Metapackage for Kalico (packaged as klipper), GrumpyScreen, Moonraker,
- Fluidd, Mainsail, and uStreamer.
+ Fluidd, Mainsail, uStreamer, and the MCU flashing tool.

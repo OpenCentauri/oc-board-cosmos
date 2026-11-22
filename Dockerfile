@@ -16,6 +16,9 @@ RUN apt-get update \
       libevent-dev \
       libjpeg-dev \
       libsystemd-dev \
+      cargo \
+      rustc \
+      libudev-dev \
       quilt \
       git \
       ca-certificates \

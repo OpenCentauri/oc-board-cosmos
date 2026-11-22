@@ -1,0 +1,12 @@
+Source: mcu-flasher
+Section: electronics
+Priority: optional
+Maintainer: OpenCentauri Project <noreply@opencentauri.github.io>
+Build-Depends: debhelper-compat (= 13), cargo, rustc, pkg-config, libudev-dev
+Standards-Version: 4.7.0
+
+Package: mcu-flasher
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: OpenCentauri MCU bootloader flashing tool
+ Rust utility for flashing firmware through Elegoo MCU bootloaders.

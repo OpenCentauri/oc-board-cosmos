@@ -1,0 +1,20 @@
+#!/usr/bin/make -f
+%:
+	dh $@
+
+override_dh_auto_configure:
+
+ override_unused:
+
+override_dh_auto_build:
+	cd /upstream/mcu-flasher/mcu-flasher && CARGO_TARGET_DIR=$(CURDIR)/target cargo build --release --locked --bin mcu-flasher
+
+override_dh_auto_test:
+	cd /upstream/mcu-flasher/mcu-flasher && CARGO_TARGET_DIR=$(CURDIR)/target cargo test --release --locked --bin mcu-flasher
+
+override_dh_auto_install:
+	install -D -m 0755 target/release/mcu-flasher debian/mcu-flasher/usr/bin/mcu-flasher
+	install -D -m 0644 /upstream/mcu-flasher/LICENSE debian/mcu-flasher/usr/share/doc/mcu-flasher/copyright
+
+override_dh_auto_clean:
+	rm -rf target
