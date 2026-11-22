@@ -8,63 +8,73 @@ apt-get install -y --no-install-recommends \
   pkg-config curl unzip patch \
   libstdc++-14-dev
 
-parse_pin() {
-  python3 - "$1" <<'PY'
-import glob, os, re, sys
-name, root = sys.argv[1], sys.argv[2]
+python3 - kalico moonraker grumpyscreen fluidd mainsail /cosmos/meta-opencentauri <<'PY'
+import glob, hashlib, os, re, subprocess, sys
+names = sys.argv[1:-1]
+root = sys.argv[-1]
 
 def version_key(path):
     stem = os.path.basename(path).rsplit(".", 1)[0]
     version = stem.split("_", 1)[1] if "_" in stem else "0"
     return [int(part) if part.isdigit() else part for part in re.split(r"([0-9]+)", version)]
 
-def candidates(suffix):
-    found = glob.glob(os.path.join(root, "recipes-apps", "*", f"{name}_{suffix}"))
-    return sorted(found, key=version_key)
+def recipe_text(name):
+    found = glob.glob(os.path.join(root, "recipes-apps", "*", f"{name}_*.bb"))
+    found += glob.glob(os.path.join(root, "recipes-apps", "*", f"{name}_*.inc"))
+    if not found:
+        sys.exit(f"no {name}_* recipe under {root}")
+    recipe = sorted(found, key=version_key)[-1]
+    text = open(recipe).read().replace("\\\n", "")
+    require = re.search(r"^require\s+(\S+)", text, re.M)
+    if require and "SRCREV" not in text:
+        inc = os.path.join(os.path.dirname(recipe), require.group(1))
+        if os.path.exists(inc):
+            text += "\n" + open(inc).read().replace("\\\n", "")
+            recipe = inc
+    version = os.path.basename(sorted(found, key=version_key)[-1]).split("_", 1)[1].rsplit(".", 1)[0]
+    return recipe, text, version
 
-bbs = candidates("*.bb")
-incs = candidates("*.inc")
-if not bbs and not incs:
-    sys.exit(f"no {name}_* recipe under {root}")
-recipe = bbs[-1] if bbs else incs[-1]
-text = open(recipe).read().replace("\\\n", "")
-require = re.search(r"^require\s+(\S+)", text, re.M)
-if require and "SRCREV" not in text:
-    inc = os.path.join(os.path.dirname(recipe), require.group(1))
-    if os.path.exists(inc):
-        text += "\n" + open(inc).read().replace("\\\n", "")
-        recipe = inc
-uri = re.search(r"(?:git|gitsm)://([^;\s\"]+)", text)
-rev = re.search(r'SRCREV\s*=\s*"([0-9a-fA-F]+)"', text)
-if not uri or not rev:
-    sys.exit(f"missing git pin in {recipe}")
-files_dir = os.path.join(os.path.dirname(recipe), "files")
-print(f"https://{uri.group(1)}")
-print(rev.group(1))
-print(files_dir)
+def fetch_git(name):
+    recipe, text, _version = recipe_text(name)
+    uri = re.search(r"(?:git|gitsm)://([^;\s\"]+)", text)
+    rev = re.search(r'SRCREV\s*=\s*"([0-9a-fA-F]+)"', text)
+    if not uri or not rev:
+        sys.exit(f"missing git pin in {recipe}")
+    dest = f"/upstream/{name}"
+    print(f"pin {name}: https://{uri.group(1)} @ {rev.group(1)}", flush=True)
+    subprocess.check_call(["git", "clone", f"https://{uri.group(1)}", dest])
+    subprocess.check_call(["git", "-C", dest, "checkout", "--detach", rev.group(1)])
+    if name == "grumpyscreen":
+        subprocess.check_call(["git", "-C", dest, "submodule", "update", "--init", "--recursive"])
+    files_dir = os.path.join(os.path.dirname(recipe), "files")
+    for patch_file in sorted(glob.glob(os.path.join(files_dir, "*.patch"))):
+        subprocess.check_call(["patch", "-d", dest, "-p1", "-i", patch_file])
+
+def fetch_zip(name):
+    recipe, text, version = recipe_text(name)
+    uri = re.search(r"https://[^\s\"]+", text)
+    digest = re.search(r'SRC_URI\[sha256sum\]\s*=\s*"([0-9a-fA-F]+)"', text)
+    if not uri or not digest:
+        sys.exit(f"missing release zip pin in {recipe}")
+    url = uri.group(0).replace("${PV}", version)
+    dest = f"/upstream/{name}"
+    archive = f"/tmp/{name}.zip"
+    print(f"pin {name}: {url}", flush=True)
+    subprocess.check_call(["curl", "-fsSL", "-o", archive, url])
+    got = hashlib.sha256(open(archive, "rb").read()).hexdigest()
+    if got != digest.group(1):
+        sys.exit(f"{name} sha256 mismatch: {got}")
+    os.makedirs(dest, exist_ok=True)
+    subprocess.check_call(["unzip", "-q", archive, "-d", dest])
+
+os.makedirs("/upstream", exist_ok=True)
+for name in names:
+    _recipe, text, _version = recipe_text(name)
+    if "git://" in text or "gitsm://" in text:
+        fetch_git(name)
+    else:
+        fetch_zip(name)
 PY
-}
-
-fetch_pinned() {
-  name=$1
-  mapfile -t pin < <(parse_pin "$name" /cosmos/meta-opencentauri)
-  echo "pin ${name}: ${pin[0]} @ ${pin[1]}"
-  git clone "${pin[0]}" "/upstream/${name}"
-  git -C "/upstream/${name}" checkout --detach "${pin[1]}"
-  if [ "$name" = grumpyscreen ]; then
-    git -C "/upstream/${name}" submodule update --init --recursive
-  fi
-  shopt -s nullglob
-  for patch_file in "${pin[2]}"/*.patch; do
-    patch -d "/upstream/${name}" -p1 < "$patch_file"
-  done
-  shopt -u nullglob
-}
-
-install -d /upstream
-fetch_pinned kalico
-fetch_pinned moonraker
-fetch_pinned grumpyscreen
 
 version_suffix="+git${COSMOS_SHA:0:12}~trixie1"
 shopt -s nullglob

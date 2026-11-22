@@ -3,9 +3,8 @@
 	dh $@
 
 override_dh_auto_build:
-	curl -fsSL -o /tmp/mainsail.zip https://github.com/mainsail-crew/mainsail/releases/download/v2.19.0/mainsail.zip
-	unzip -q /tmp/mainsail.zip -d /tmp/mainsail
+
 
 override_dh_auto_install:
 	install -d debian/mainsail/var/www/mainsail
-	cp -a /tmp/mainsail/. debian/mainsail/var/www/mainsail/
+	cp -a /upstream/mainsail/. debian/mainsail/var/www/mainsail/
