@@ -1,0 +1,13 @@
+Source: cosmos
+Section: metapackages
+Priority: optional
+Maintainer: OpenCentauri Project <noreply@opencentauri.github.io>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.0
+
+Package: cosmos
+Architecture: all
+Depends: klipper, grumpyscreen, moonraker, fluidd, mainsail
+Description: OpenCentauri Cosmos printer stack
+ Metapackage for Kalico (packaged as klipper), GrumpyScreen, Moonraker,
+ Fluidd, and Mainsail.

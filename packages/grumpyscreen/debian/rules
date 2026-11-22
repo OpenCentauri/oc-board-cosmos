@@ -1,0 +1,17 @@
+#!/usr/bin/make -f
+SRCREV := 33a3e576076e8a7c436fbd7c534cd73af7fe4c44
+%:
+	dh $@
+
+override_dh_auto_build:
+	git clone https://github.com/pellcorp/grumpyscreen.git /tmp/grumpyscreen
+	git -C /tmp/grumpyscreen checkout $(SRCREV)
+	$(MAKE) -C /tmp/grumpyscreen libhv.a
+	$(MAKE) -C /tmp/grumpyscreen wpaclient
+	$(MAKE) -C /tmp/grumpyscreen default GUPPY_SMALL_SCREEN=true COSMOS=true MMU_BACKENDS=afc
+
+override_dh_auto_install:
+	install -d debian/grumpyscreen/usr/bin
+	install -m 0755 /tmp/grumpyscreen/build/bin/grumpyscreen debian/grumpyscreen/usr/bin/grumpyscreen
+	install -d debian/grumpyscreen/etc/init.d
+	install -m 0755 debian/grumpyscreen.init debian/grumpyscreen/etc/init.d/grumpyscreen

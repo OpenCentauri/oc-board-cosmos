@@ -1,0 +1,12 @@
+Source: grumpyscreen
+Section: misc
+Priority: optional
+Maintainer: OpenCentauri Project <noreply@opencentauri.github.io>
+Build-Depends: debhelper-compat (= 13), build-essential, git, ca-certificates, pkg-config
+Standards-Version: 4.7.0
+
+Package: grumpyscreen
+Architecture: arm64
+Depends: ${misc:Depends}, ${shlibs:Depends}, klipper, moonraker
+Description: GrumpyScreen touch UI
+ Native LVGL UI built at the revision pinned by Cosmos.

@@ -1,0 +1,9 @@
+#!/usr/bin/make -f
+%:
+	dh $@
+
+override_dh_auto_install:
+	install -d debian/moonraker/usr/share/moonraker
+	cp -a /cosmos/moonraker debian/moonraker/usr/share/moonraker/ || cp -a /cosmos/meta-opencentauri/recipes-apps/moonraker debian/moonraker/usr/share/moonraker/
+	install -d debian/moonraker/etc/init.d
+	install -m 0755 debian/moonraker.init debian/moonraker/etc/init.d/moonraker

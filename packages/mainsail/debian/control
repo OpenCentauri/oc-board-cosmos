@@ -1,0 +1,11 @@
+Source: mainsail
+Section: web
+Priority: optional
+Maintainer: OpenCentauri Project <noreply@opencentauri.github.io>
+Build-Depends: debhelper-compat (= 13), curl, unzip
+Standards-Version: 4.7.0
+
+Package: mainsail
+Architecture: all
+Depends: ${misc:Depends}
+Description: Mainsail web interface

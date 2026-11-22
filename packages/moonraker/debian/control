@@ -1,0 +1,11 @@
+Source: moonraker
+Section: misc
+Priority: optional
+Maintainer: OpenCentauri Project <noreply@opencentauri.github.io>
+Build-Depends: debhelper-compat (= 13), quilt
+Standards-Version: 4.7.0
+
+Package: moonraker
+Architecture: all
+Depends: ${misc:Depends}, python3, python3-tornado, python3-serial, python3-pil, python3-jinja2, klipper
+Description: Moonraker API server with OpenCentauri patches

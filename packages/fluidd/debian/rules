@@ -1,0 +1,11 @@
+#!/usr/bin/make -f
+%:
+	dh $@
+
+override_dh_auto_build:
+	curl -fsSL -o /tmp/fluidd.zip https://github.com/fluidd-core/fluidd/releases/download/v1.37.4/fluidd.zip
+	unzip -q /tmp/fluidd.zip -d /tmp/fluidd
+
+override_dh_auto_install:
+	install -d debian/fluidd/var/www/fluidd
+	cp -a /tmp/fluidd/. debian/fluidd/var/www/fluidd/

@@ -1,0 +1,11 @@
+Source: fluidd
+Section: web
+Priority: optional
+Maintainer: OpenCentauri Project <noreply@opencentauri.github.io>
+Build-Depends: debhelper-compat (= 13), curl, unzip, python3
+Standards-Version: 4.7.0
+
+Package: fluidd
+Architecture: all
+Depends: ${misc:Depends}
+Description: Fluidd web interface

@@ -1,0 +1,67 @@
+name: Trixie arm64 apt
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 6 * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: trixie-arm64-${{ github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Record cosmos main
+        id: cosmos
+        run: |
+          sha=$(git ls-remote https://github.com/OpenCentauri/cosmos.git refs/heads/main | awk '{print $1}')
+          test -n "$sha"
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
+          echo "Cosmos main: $sha"
+
+      - name: Skip unchanged cosmos SHA
+        id: preflight
+        run: |
+          url="https://opencentauri.github.io/oc-board-cosmos/trixie/arm64/cosmos-sha"
+          previous=$(curl -fsSL "$url" || true)
+          if [ "$previous" = "${{ steps.cosmos.outputs.sha }}" ] && [ "${{ github.event_name }}" != "workflow_dispatch" ] && [ "${{ github.event_name }}" != "push" ]; then
+            echo "needs_build=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "needs_build=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: docker/setup-qemu-action@v3
+        if: steps.preflight.outputs.needs_build == 'true'
+
+      - uses: docker/setup-buildx-action@v3
+        if: steps.preflight.outputs.needs_build == 'true'
+
+      - name: Build packages
+        if: steps.preflight.outputs.needs_build == 'true'
+        run: bash scripts/build-debs.sh "${{ steps.cosmos.outputs.sha }}"
+
+      - name: Install apt archive tools
+        if: steps.preflight.outputs.needs_build == 'true'
+        run: sudo apt-get update && sudo apt-get install -y apt-utils
+
+      - name: Stage apt archive
+        if: steps.preflight.outputs.needs_build == 'true'
+        run: bash scripts/stage-apt.sh "${{ steps.cosmos.outputs.sha }}"
+
+      - name: Publish GitHub Pages
+        if: steps.preflight.outputs.needs_build == 'true' && github.event_name != 'pull_request'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./publish
+          keep_files: true
