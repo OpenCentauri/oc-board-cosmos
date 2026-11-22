@@ -24,30 +24,66 @@ jobs:
     outputs:
       image: ${{ steps.meta.outputs.image }}
     steps:
-      - uses: actions/checkout@v5
-
-      - uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Decide whether the builder image is current
         id: meta
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-          base=ghcr.io/armbian/docker-armbian-build:armbian-debian-trixie-latest
           image="ghcr.io/${GITHUB_REPOSITORY,,}:builder"
           echo "image=$image" >> "$GITHUB_OUTPUT"
-          docker pull "$base"
-          base_digest=$(docker image inspect --format '{{index .RepoDigests 0}}' "$base" | awk -F@ '{print $2}')
-          dockerfile_sha=$(sha256sum Dockerfile | awk '{print $1}')
-          echo "Base digest: $base_digest"
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends curl jq ca-certificates
+
+          registry_token() {
+            scope=$1
+            curl -fsSL \
+              -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+              "https://ghcr.io/token?service=ghcr.io&scope=${scope}" \
+              | jq -r .token
+          }
+          manifest_digest() {
+            repository=$1
+            tag=$2
+            token=$3
+            curl -fsSI \
+              -H "Authorization: Bearer ${token}" \
+              -H "Accept: application/vnd.oci.image.index.v1+json, application/vnd.docker.distribution.manifest.list.v2+json" \
+              "https://ghcr.io/v2/${repository}/manifests/${tag}" \
+              | awk 'tolower($1)=="docker-content-digest:" { gsub("\r", "", $2); print $2 }'
+          }
+          config_label() {
+            repository=$1
+            digest=$2
+            label=$3
+            token=$4
+            config=$(curl -fsSL \
+              -H "Authorization: Bearer ${token}" \
+              -H "Accept: application/vnd.oci.image.manifest.v1+json" \
+              "https://ghcr.io/v2/${repository}/manifests/${digest}" \
+              | jq -r '.config.digest')
+            curl -fsSL \
+              -H "Authorization: Bearer ${token}" \
+              "https://ghcr.io/v2/${repository}/blobs/${config}" \
+              | jq -r --arg label "$label" '.config.Labels[$label] // empty'
+          }
+
+          dockerfile_sha=$(curl -fsSL \
+            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+            -H "Accept: application/vnd.github.raw+json" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/contents/Dockerfile?ref=${GITHUB_SHA}" \
+            | sha256sum | awk '{print $1}')
+          base_token=$(registry_token "repository:armbian/docker-armbian-build:pull")
+          base_digest=$(manifest_digest armbian/docker-armbian-build armbian-debian-trixie-latest "$base_token")
+          test -n "$base_digest"
           echo "Dockerfile sha: $dockerfile_sha"
+          echo "Base digest: $base_digest"
+
           need=true
-          if docker pull "$image"; then
-            have=$(docker image inspect --format '{{ index .Config.Labels "org.opencontainers.image.base.digest" }}' "$image")
-            have_dockerfile=$(docker image inspect --format '{{ index .Config.Labels "org.opencontainers.image.dockerfile.sha" }}' "$image")
+          builder_token=$(registry_token "repository:${GITHUB_REPOSITORY,,}:pull")
+          if builder_digest=$(manifest_digest "${GITHUB_REPOSITORY,,}" builder "$builder_token"); then
+            have=$(config_label "${GITHUB_REPOSITORY,,}" "$builder_digest" org.opencontainers.image.base.digest "$builder_token")
+            have_dockerfile=$(config_label "${GITHUB_REPOSITORY,,}" "$builder_digest" org.opencontainers.image.dockerfile.sha "$builder_token")
             echo "Published base digest: $have"
             echo "Published Dockerfile sha: $have_dockerfile"
             if [ "$have" = "$base_digest" ] && [ "$have_dockerfile" = "$dockerfile_sha" ]; then
@@ -59,6 +95,16 @@ jobs:
           echo "base_digest=$base_digest" >> "$GITHUB_OUTPUT"
           echo "dockerfile_sha=$dockerfile_sha" >> "$GITHUB_OUTPUT"
           echo "need_image=$need" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@v5
+        if: steps.meta.outputs.need_image == 'true'
+
+      - uses: docker/login-action@v4
+        if: steps.meta.outputs.need_image == 'true'
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push builder image
         if: steps.meta.outputs.need_image == 'true'
