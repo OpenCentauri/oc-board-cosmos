@@ -2,7 +2,7 @@
 
 Debian packages of the OpenCentauri Cosmos printer stack for Armbian on Debian 13 (Trixie), `arm64`.
 
-This is not an Isar or OpenEmbedded layer. `meta-opencentauri` recipes cannot be executed by Isar. This repository checks out [OpenCentauri/cosmos](https://github.com/OpenCentauri/cosmos) `main`, applies the patches shipped beside those recipes, and builds `.deb` packages with `dpkg-buildpackage` inside Debian Trixie `arm64`.
+This repository checks out [OpenCentauri/cosmos](https://github.com/OpenCentauri/cosmos) `main`, applies the patches shipped beside those recipes, and builds `.deb` packages with `dpkg-buildpackage` inside Debian Trixie `arm64`.
 
 ## Packages
 

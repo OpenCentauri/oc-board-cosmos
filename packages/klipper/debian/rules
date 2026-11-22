@@ -3,7 +3,7 @@
 	dh $@
 
 override_dh_auto_build:
-	cd /cosmos/klippy/chelper && $(CC) -shared -fPIC -O2 -o c_helper.so \
+	cd /upstream/kalico/klippy/chelper && $(CC) -shared -fPIC -O2 -o c_helper.so \
 		pyhelper.c serialqueue.c stepcompress.c steppersync.c itersolve.c \
 		trapq.c pollreactor.c msgblock.c trdispatch.c kin_cartesian.c \
 		kin_corexy.c kin_corexz.c kin_delta.c kin_deltesian.c kin_polar.c \
@@ -11,7 +11,7 @@ override_dh_auto_build:
 
 override_dh_auto_install:
 	install -d debian/klipper/usr/share/klipper
-	cp -a /cosmos/klippy debian/klipper/usr/share/klipper/
-	install -m 0755 /cosmos/klippy/chelper/c_helper.so debian/klipper/usr/share/klipper/klippy/chelper/
+	cp -a /upstream/kalico/klippy debian/klipper/usr/share/klipper/
+	install -m 0755 /upstream/kalico/klippy/chelper/c_helper.so debian/klipper/usr/share/klipper/klippy/chelper/
 	install -d debian/klipper/etc/init.d
 	install -m 0755 debian/klipper.init debian/klipper/etc/init.d/klipper
