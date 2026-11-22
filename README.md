@@ -15,6 +15,24 @@ This repository checks out [OpenCentauri/cosmos](https://github.com/OpenCentauri
 | `mainsail` | Static web UI. |
 | `cosmos` | Metapackage depending on the five packages above. |
 
+Python dependencies are declared on the packages that consume them:
+`klipper` and `moonraker`. Moonraker also declares `curl`, because the
+selected upstream recipe and startup/update paths use it. Trixie packages
+are used for modules already in the Trixie index. The custom Debian binary
+packages `python3-inotify-simple`, `python3-preprocess-cancellation`,
+`python3-streaming-form-data`, and `python3-apprise` are built from the
+selected Moonraker source's exact or bounded PyPI metadata. Downloads are
+verified against PyPI SHA-256 metadata and safely unpacked.
+
+`python3-inotify` is not used for Moonraker's `inotify_simple` import:
+it is a separate Python module/package. Moonraker's `msgspec` and `uvloop`
+dependencies are compatible with Trixie's `python3-msgspec` 0.19.0 and
+`python3-uvloop` 0.21.0 in package metadata terms; the exact upstream
+compatibility matrix beyond those package versions was not hardware-tested
+in this environment. Optional notification backend features are provided
+through `apprise`. Optional Moonraker speedups are declared because the
+selected Cosmos recipe lists `msgspec` and `uvloop`.
+
 ## Install
 
 ```bash

@@ -1,0 +1,8 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: inotify-simple
+Source: https://pypi.org/project/inotify-simple/
+
+Files: *
+License: MIT
+ Debian package source metadata; upstream license is preserved in the source
+ archive selected by scripts/fetch-python-deps.py.

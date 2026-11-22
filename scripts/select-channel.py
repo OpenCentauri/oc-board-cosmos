@@ -24,10 +24,31 @@ def resolve(ref):
     return sha
 
 
+def nightly_should_build(sha, previous, event_name):
+    return previous.get('sha') != sha or event_name in ('push', 'workflow_dispatch')
+
+
+def eligible_release(release, previous, cutoff='2026-11-22T12:33:00+00:00',
+                     excluded_id='430278801'):
+    if not release or release.get('draft') or release.get('prerelease'):
+        return None
+    published = datetime.datetime.fromisoformat(
+        release['published_at'].replace('Z', '+00:00'))
+    cutoff = datetime.datetime.fromisoformat(cutoff)
+    release_id = str(release['id'])
+    if release_id == excluded_id:
+        return None
+    if published <= cutoff:
+        return None
+    if str(previous.get('release_id', '')) == release_id:
+        return None
+    return release_id
+
+
 outputs = dict(build='false', sha='', release_id='', tag='')
 if channel == 'nightly':
     sha = resolve('refs/heads/main')
-    if previous.get('sha') != sha or os.environ['GITHUB_EVENT_NAME'] in ('push', 'workflow_dispatch'):
+    if nightly_should_build(sha, previous, os.environ['GITHUB_EVENT_NAME']):
         outputs.update(build='true', sha=sha)
 else:
     request = urllib.request.Request('https://api.github.com/repos/OpenCentauri/cosmos/releases/latest', headers={'Authorization': 'Bearer ' + os.environ['GITHUB_TOKEN'], 'Accept': 'application/vnd.github+json', 'User-Agent': 'oc-board-cosmos'})
@@ -38,12 +59,10 @@ else:
         if error.code != 404:
             raise
         release = None
-    if release and not release['draft'] and not release['prerelease']:
-        published = datetime.datetime.fromisoformat(release['published_at'].replace('Z', '+00:00'))
-        cutoff = datetime.datetime.fromisoformat('2026-11-22T12:33:00+00:00')
-        release_id = str(release['id'])
-        if release_id != '430278801' and published > cutoff and str(previous.get('release_id', '')) != release_id:
-            outputs.update(build='true', sha=resolve('refs/tags/' + release['tag_name']), release_id=release_id, tag=release['tag_name'])
+    release_id = eligible_release(release, previous)
+    if release_id:
+        outputs.update(build='true', sha=resolve('refs/tags/' + release['tag_name']),
+                       release_id=release_id, tag=release['tag_name'])
 with open(os.environ['GITHUB_OUTPUT'], 'a') as handle:
     for key, value in outputs.items():
         if '\n' in value or '\r' in value:

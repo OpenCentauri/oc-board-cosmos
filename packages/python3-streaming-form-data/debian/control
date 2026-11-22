@@ -1,0 +1,13 @@
+Source: python3-streaming-form-data
+Section: python
+Priority: optional
+Maintainer: OpenCentauri Project <noreply@opencentauri.github.io>
+Build-Depends: debhelper-compat (= 13), dh-python, python3-all,
+ python3-dev, python3-setuptools, python3-wheel, cython3
+Standards-Version: 4.7.0
+
+Package: python3-streaming-form-data
+Architecture: arm64
+Depends: ${misc:Depends}, ${python3:Depends}, ${shlibs:Depends}
+Description: Streaming multipart/form-data parser for Python 3
+ Native streaming multipart parser used by Moonraker.

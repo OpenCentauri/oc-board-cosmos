@@ -1,0 +1,8 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: preprocess-cancellation
+Source: https://pypi.org/project/preprocess-cancellation/
+
+Files: *
+License: GPL-3.0-only
+ Debian package source metadata; upstream license is preserved in the source
+ archive selected by scripts/fetch-python-deps.py.
