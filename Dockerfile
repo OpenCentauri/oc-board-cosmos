@@ -10,6 +10,7 @@ RUN apt-get update \
       build-essential \
       debhelper \
       devscripts \
+      quilt \
       git \
       ca-certificates \
       python3 \
