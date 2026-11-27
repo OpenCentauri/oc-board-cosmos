@@ -1,0 +1,11 @@
+#!/usr/bin/make -f
+%:
+	dh $@
+
+override_dh_auto_install:
+	install -D -m 0755 /cosmos/meta-opencentauri/recipes-data/config-manager/files/config_manager.py debian/cosmos-config/usr/bin/config-manager
+	install -D -m 0755 /cosmos/meta-opencentauri/recipes-data/config-manager/files/build-klipper-var-config.sh debian/cosmos-config/usr/bin/build-klipper-var-config
+	install -D -m 0644 /cosmos/meta-opencentauri/recipes-data/config-manager/files/centauri-carbon-1/default-machine.conf debian/cosmos-config/usr/share/config-manager/default-machine.conf
+	sed -i 's/^web_ui = .*/web_ui = fluidd/' debian/cosmos-config/usr/share/config-manager/default-machine.conf
+	install -D -m 0755 debian/cosmos-klipper-prestart debian/cosmos-config/usr/bin/cosmos-klipper-prestart
+	install -D -m 0755 debian/cosmos-moonraker-prestart debian/cosmos-config/usr/bin/cosmos-moonraker-prestart

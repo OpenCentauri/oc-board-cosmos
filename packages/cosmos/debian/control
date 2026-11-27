@@ -7,7 +7,7 @@ Standards-Version: 4.7.0
 
 Package: cosmos
 Architecture: all
-Depends: klipper, afc, tmc-autotune, grumpyscreen, moonraker, fluidd, mainsail, ustreamer, mcu-flasher, flashtool
+Depends: klipper, afc, tmc-autotune, grumpyscreen, moonraker, fluidd, mainsail, ustreamer, mcu-flasher, flashtool, cosmos-mcu-flash, oc-board-config-cb2
 Description: OpenCentauri Cosmos printer stack
  Metapackage for Kalico (packaged as klipper), AFC, TMC Autotune,
  GrumpyScreen, Moonraker, Fluidd, Mainsail, uStreamer, and the MCU

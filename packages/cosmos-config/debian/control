@@ -1,0 +1,12 @@
+Source: cosmos-config
+Section: misc
+Priority: optional
+Maintainer: OpenCentauri Project <noreply@opencentauri.github.io>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.0
+
+Package: cosmos-config
+Architecture: all
+Depends: ${misc:Depends}, python3, oc-board-config-common
+Description: Cosmos configuration manager and startup helpers
+ Applies cosmos.conf using the OpenCentauri Cosmos configuration generator.

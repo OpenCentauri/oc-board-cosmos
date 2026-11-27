@@ -1,0 +1,5 @@
+cosmos-mcu-flash (2026.02.00) unstable; urgency=medium
+
+  * Package CC1 MCU firmware and gated OpenCentauri-board flash services.
+
+ -- OpenCentauri Project <noreply@opencentauri.github.io>  Thu, 26 Nov 2026 00:00:00 +0000

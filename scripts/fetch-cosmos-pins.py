@@ -155,6 +155,9 @@ def main():
         "ustreamer": recipe_version(root, "ustreamer"),
         "afc": recipe_version(root, "afc"),
         "tmc-autotune": recipe_version(root, "tmc-autotune"),
+        "addon": recipe_version(root, "addon"),
+        "cosmos-config": recipe_version(root, "config-manager"),
+        "cosmos-mcu-flash": recipe_version(root, "kalico-firmware-bed"),
         "cosmos": cosmos_version(root),
     }
     with open("/tmp/package-versions", "w") as handle:

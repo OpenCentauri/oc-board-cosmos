@@ -1,0 +1,15 @@
+[Unit]
+Description=Update Kalico firmware on Canvas MCU
+After=local-fs.target
+Before=klipper.service
+Conflicts=klipper.service
+OnSuccess=klipper.service
+OnFailure=klipper.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/cosmos-mcu-flash/klipper-firmware-canvas start
+TimeoutStartSec=300
+
+[Install]
+WantedBy=multi-user.target

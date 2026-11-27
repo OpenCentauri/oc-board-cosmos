@@ -1,0 +1,33 @@
+#!/bin/sh
+set -eu
+
+mkdir -p /board-resource /user-resource/.tmp /user-resource/gcodes
+mkdir -p /etc/klipper/config/moonraker-readonly
+
+if [ -L /etc/klipper/gcodes ]; then
+    if [ "$(readlink /etc/klipper/gcodes)" != /user-resource/gcodes ]; then
+        printf '%s\n' '/etc/klipper/gcodes points to the wrong location' >&2
+        exit 1
+    fi
+elif [ -e /etc/klipper/gcodes ]; then
+    printf '%s\n' 'Move /etc/klipper/gcodes to /user-resource/gcodes, then link it back' >&2
+    exit 1
+else
+    ln -s /user-resource/gcodes /etc/klipper/gcodes
+fi
+
+ui=$(/usr/bin/config-manager ui web_ui)
+case "$ui" in
+    fluidd|mainsail) ;;
+    *) printf 'Unsupported web UI: %s\n' "$ui" >&2; exit 1 ;;
+esac
+
+if [ -L /etc/webui ] || [ -f /etc/webui ]; then
+    rm -f /etc/webui
+elif [ -d /etc/webui ]; then
+    printf '%s\n' '/etc/webui is a real directory; refusing to replace it' >&2
+    exit 1
+fi
+ln -s "/var/www/$ui" /etc/webui
+
+exec /usr/bin/addons init

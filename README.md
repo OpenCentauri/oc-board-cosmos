@@ -8,14 +8,21 @@ This repository checks out [OpenCentauri/cosmos](https://github.com/OpenCentauri
 
 | Package | Contents |
 |---|---|
-| `klipper` | Kalico `klippy`, compiled `c_helper.so`, SysV init. Provides the `klipper` package name. |
+| `klipper` | Kalico `klippy`, compiled `c_helper.so`, and native systemd service. Provides the `klipper` package name. |
 | `grumpyscreen` | Native touch UI, built from the revision pinned by Cosmos. |
-| `moonraker` | Moonraker plus the Cosmos patches under `recipes-apps/moonraker/files`. |
+| `moonraker` | Moonraker plus the Cosmos patches and native systemd service. |
 | `fluidd` | Static web UI. |
 | `mainsail` | Static web UI. |
 | `afc` | AFC-Klipper-Add-On extras and Cosmos readonly configuration files. |
 | `tmc-autotune` | TMC stepper autotuning extra and motor database. |
+| `addon` | Cosmos addon manager with systemd service restarts. |
+| `cosmos-config` | `cosmos.conf` manager, generated fragments, and daemon prestart helpers. |
+| `cosmos-mcu-flash` | Prebuilt CC1 bed/toolhead/Canvas Kalico and Katapult payloads with gated flash units. |
 | `cosmos` | Metapackage depending on the packages above. |
+
+`cosmos-config` intentionally depends on the separately maintained `oc-board-config-common` package. The `cosmos` metapackage selects `oc-board-config-cb2` for the tested BTT CB2 host. Together they provide `printer.cfg` and the static readonly configuration under `/etc/klipper/config`; this repository does not generate those static files.
+
+Firmware units are enabled at boot but never started or restarted by package installation or upgrade. Flashing requires an `/etc/mcu-flash-enable` file and the expected device. OC-board Katapult entry is not solved yet; the scripts retain the existing fallback flow without the unsupported stock GPIO operations.
 
 Python dependencies are declared on the packages that consume them:
 `klipper`, `afc`, `tmc-autotune`, and `moonraker`. Moonraker also declares `curl`, because the

@@ -1,0 +1,11 @@
+#!/usr/bin/make -f
+%:
+	dh $@
+
+override_dh_auto_test:
+	python3 /cosmos/meta-opencentauri/recipes-data/addon/files/addon.py -h
+
+override_dh_auto_install:
+	install -D -m 0755 /cosmos/meta-opencentauri/recipes-data/addon/files/addon.py debian/addon/usr/bin/addons
+	sed -i 's|\[str(INIT_DIR / service), "restart"\]|["systemctl", "restart", f"{service}.service"]|' debian/addon/usr/bin/addons
+	sed -i '/^INIT_DIR = /d' debian/addon/usr/bin/addons

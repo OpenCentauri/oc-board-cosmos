@@ -13,8 +13,7 @@ override_dh_auto_install:
 	install -d debian/klipper/usr/share/klipper
 	cp -a /upstream/kalico/klippy debian/klipper/usr/share/klipper/
 	install -m 0755 /upstream/kalico/klippy/chelper/c_helper.so debian/klipper/usr/share/klipper/klippy/chelper/
-	install -d debian/klipper/etc/init.d
-	install -m 0755 debian/klipper.init debian/klipper/etc/init.d/klipper
-	install -d debian/klipper/etc/klipper/config/klipper-readonly
-	install -m 0644 /cosmos/meta-opencentauri/recipes-apps/klipper/files/printer.cfg debian/klipper/etc/klipper/config/printer.cfg
-	find /cosmos/meta-opencentauri/recipes-apps/klipper/files/centauri-carbon-1 /src/files/oc-board -maxdepth 1 -type f -exec install -m 0644 {} debian/klipper/etc/klipper/config/klipper-readonly/ \;
+	install -m 0644 /cosmos/meta-opencentauri/recipes-apps/klipper/files/canvas_rfid.py debian/klipper/usr/share/klipper/klippy/extras/
+	install -m 0644 /cosmos/meta-opencentauri/recipes-apps/klipper/files/canvas_filament_sensor.py debian/klipper/usr/share/klipper/klippy/extras/
+	install -d debian/klipper/usr/share/klipper/config
+	install -d debian/klipper/usr/share/klipper/docs

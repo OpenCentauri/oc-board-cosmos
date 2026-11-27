@@ -1,0 +1,17 @@
+[Unit]
+Description=Moonraker API server and Cosmos web UI
+Wants=network-online.target
+After=network-online.target klipper.service
+
+[Service]
+Type=simple
+Environment=PYTHONPATH=/usr/share/moonraker
+Environment=TMPDIR=/user-resource/.tmp
+ExecStartPre=/usr/bin/cosmos-moonraker-prestart
+ExecStart=/usr/bin/python3 -X lazy_imports=all -X no_debug_ranges -m moonraker.moonraker -d /etc/klipper -l /board-resource/moonraker.log -u /run/moonraker.sock
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=10
+
+[Install]
+WantedBy=multi-user.target

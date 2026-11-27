@@ -1,0 +1,16 @@
+[Unit]
+Description=Kalico 3D printer host
+After=local-fs.target klipper-firmware-bed.service klipper-firmware-toolhead.service klipper-firmware-canvas.service
+
+[Service]
+Type=simple
+Environment=TMPDIR=/user-resource/.tmp
+ExecStartPre=/usr/bin/test -f /etc/klipper/config/printer.cfg
+ExecStartPre=/usr/bin/cosmos-klipper-prestart
+ExecStart=/usr/bin/python3 -X lazy_imports=all -X no_debug_ranges /usr/share/klipper/klippy/klippy.py /etc/klipper/config/printer.cfg -l /board-resource/klippy.log -a /run/klippy.sock
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=10
+
+[Install]
+WantedBy=multi-user.target

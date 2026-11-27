@@ -9,6 +9,6 @@ Package: klipper
 Architecture: arm64
 Depends: ${misc:Depends}, ${shlibs:Depends}, python3,
  python3-cffi, python3-greenlet, python3-jinja2, python3-markupsafe,
- python3-serial, python3-numpy, python3-can, python3-msgspec
+ python3-serial, python3-numpy, python3-can, python3-msgspec, cosmos-config
 Description: Kalico 3D printer host (Klipper package name)
  Host-side Kalico firmware from OpenCentauri Cosmos, installed as klipper.

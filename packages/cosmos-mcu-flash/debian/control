@@ -1,0 +1,13 @@
+Source: cosmos-mcu-flash
+Section: electronics
+Priority: optional
+Maintainer: OpenCentauri Project <noreply@opencentauri.github.io>
+Build-Depends: debhelper-compat (= 13), python3, gcc-arm-none-eabi, binutils-arm-none-eabi, libnewlib-arm-none-eabi
+Standards-Version: 4.7.0
+
+Package: cosmos-mcu-flash
+Architecture: all
+Depends: ${misc:Depends}, mcu-flasher, flashtool, udev, cosmos-config
+Description: CC1 MCU firmware and gated flashing services
+ Kalico bed, toolhead, and Canvas firmware with Katapult deployers and
+ OpenCentauri-board update services.

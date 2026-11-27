@@ -5,5 +5,8 @@
 override_dh_auto_install:
 	install -d debian/moonraker/usr/share/moonraker
 	cp -a /upstream/moonraker/moonraker debian/moonraker/usr/share/moonraker/
-	install -d debian/moonraker/etc/init.d
-	install -m 0755 debian/moonraker.init debian/moonraker/etc/init.d/moonraker
+	install -D -m 0644 /cosmos/meta-opencentauri/recipes-apps/moonraker/files/moonraker.conf debian/moonraker/etc/klipper/config/moonraker.conf
+	install -D -m 0644 /cosmos/meta-opencentauri/recipes-apps/moonraker/files/moonraker-readonly.conf debian/moonraker/etc/klipper/config/moonraker-readonly/moonraker.conf
+	install -D -m 0644 /cosmos/meta-opencentauri/recipes-apps/moonraker/files/moonraker.asvc debian/moonraker/etc/klipper/moonraker.asvc
+	sed -i 's/provider: sysvinit/provider: systemd_cli/' debian/moonraker/etc/klipper/config/moonraker-readonly/moonraker.conf
+	grep -q '^web_client: /etc/webui$$' debian/moonraker/etc/klipper/config/moonraker-readonly/moonraker.conf

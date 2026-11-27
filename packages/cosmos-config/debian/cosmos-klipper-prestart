@@ -1,0 +1,39 @@
+#!/bin/sh
+set -eu
+
+CONFIG=/etc/klipper/config/printer.cfg
+VERSION=0.0.8-2
+VERSION_FILE=/etc/klipper-config.ver
+BACKUPS=/etc/klipper/config/config-backups
+
+mkdir -p /board-resource /user-resource/.tmp /user-resource/gcodes
+mkdir -p /etc/klipper/config/moonraker-readonly
+
+if [ -L /etc/klipper/gcodes ]; then
+    if [ "$(readlink /etc/klipper/gcodes)" != /user-resource/gcodes ]; then
+        printf '%s\n' '/etc/klipper/gcodes points to the wrong location' >&2
+        exit 1
+    fi
+elif [ -e /etc/klipper/gcodes ]; then
+    printf '%s\n' 'Move /etc/klipper/gcodes to /user-resource/gcodes, then link it back' >&2
+    exit 1
+else
+    ln -s /user-resource/gcodes /etc/klipper/gcodes
+fi
+
+current=
+if [ -f "$VERSION_FILE" ]; then
+    current=$(tr -d '[:space:]' < "$VERSION_FILE")
+fi
+
+if [ "$current" != "$VERSION" ]; then
+    if [ -f "$CONFIG" ]; then
+        stamp=$(date +%Y%m%d_%H%M%S)
+        mkdir -p "$BACKUPS"
+        cp "$CONFIG" "$BACKUPS/printer-$stamp.cfg"
+        sed -i '/^#\*#/d' "$CONFIG"
+    fi
+    printf '%s\n' "$VERSION" > "$VERSION_FILE"
+fi
+
+exec /usr/bin/build-klipper-var-config

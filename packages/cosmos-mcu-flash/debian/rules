@@ -1,0 +1,31 @@
+#!/usr/bin/make -f
+%:
+	dh $@
+
+override_dh_auto_clean:
+	rm -rf build-kalico-* build-katapult-*
+
+override_dh_auto_build:
+	set -e; for board in bed toolhead canvas; do \
+		cp -a /upstream/kalico "build-kalico-$$board"; \
+		cp "/cosmos/meta-opencentauri/recipes-apps/klipper/files/centauri-carbon-1/config.$$board" "build-kalico-$$board/.config"; \
+		$(MAKE) -C "build-kalico-$$board" olddefconfig; \
+		$(MAKE) -C "build-kalico-$$board"; \
+		cp -a /upstream/katapult "build-katapult-$$board"; \
+		cp "/cosmos/meta-opencentauri/recipes-apps/katapult/files/centauri-carbon-1/config.$$board" "build-katapult-$$board/.config"; \
+		$(MAKE) -C "build-katapult-$$board" olddefconfig; \
+		$(MAKE) -C "build-katapult-$$board"; \
+	done
+
+override_dh_auto_install:
+	set -e; revision=$$(git -C /upstream/kalico rev-parse HEAD); \
+	pr=$$(sed -n 's/^PR = "\([^"]*\)"/\1/p' /cosmos/meta-opencentauri/recipes-apps/klipper/kalico_2026.02.00.inc); \
+	for board in bed toolhead canvas; do \
+		install -D -m 0644 "build-kalico-$$board/out/klipper.bin" "debian/cosmos-mcu-flash/usr/lib/firmware/klipper-$$board.bin"; \
+		printf '%s-%s\n' "$$revision" "$$pr" > "debian/cosmos-mcu-flash/usr/lib/firmware/klipper-$$board.bin.ver"; \
+		install -D -m 0644 "build-katapult-$$board/out/deployer.bin" "debian/cosmos-mcu-flash/usr/lib/firmware/katapult-deployer-$$board.bin"; \
+		install -D -m 0755 "debian/scripts/klipper-firmware-$$board" "debian/cosmos-mcu-flash/usr/libexec/cosmos-mcu-flash/klipper-firmware-$$board"; \
+	done
+
+override_dh_installsystemd:
+	dh_installsystemd --no-start --no-restart-after-upgrade --no-stop-on-upgrade

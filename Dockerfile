@@ -9,6 +9,9 @@ RUN apt-get update \
  && apt-get install -y --no-install-recommends \
       apt-utils \
       build-essential \
+      gcc-arm-none-eabi \
+      libnewlib-arm-none-eabi \
+      binutils-arm-none-eabi \
       debhelper \
       devscripts \
       dh-exec \

@@ -68,9 +68,11 @@ class CosmosAddonTests(unittest.TestCase):
         self.assertIn("packaging_fingerprint", select)
         self.assertIn("previous.get('packaging_fingerprint')", select)
 
+    @unittest.skipUnless(pathlib.Path('/upstream/afc').is_dir() and pathlib.Path('/upstream/tmc-autotune').is_dir(),
+                         'requires sources fetched by the package builder')
     def test_pinned_source_payload_and_imports_exist(self):
-        afc = pathlib.Path("/tmp/afc-source")
-        tmc = pathlib.Path("/tmp/tmc-source")
+        afc = pathlib.Path('/upstream/afc')
+        tmc = pathlib.Path('/upstream/tmc-autotune')
         self.assertFalse((afc / "extras/__init__.py").is_symlink())
         self.assertTrue((afc / "extras/AFC.py").is_file())
         self.assertTrue((tmc / "autotune_tmc.py").is_file())

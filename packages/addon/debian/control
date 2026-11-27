@@ -1,0 +1,12 @@
+Source: addon
+Section: misc
+Priority: optional
+Maintainer: OpenCentauri Project <noreply@opencentauri.github.io>
+Build-Depends: debhelper-compat (= 13), python3
+Standards-Version: 4.7.0
+
+Package: addon
+Architecture: all
+Depends: ${misc:Depends}, python3, git
+Description: Cosmos addon manager
+ Installs and removes Klipper addons and manages Moonraker update configuration.
