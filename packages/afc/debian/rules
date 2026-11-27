@@ -8,7 +8,7 @@ override_dh_auto_install:
 	install -d debian/afc/usr/share/klipper/klippy/extras
 	find /upstream/afc/extras -maxdepth 1 -type f -name '*.py' ! -name '__init__.py' -exec install -m 0644 {} debian/afc/usr/share/klipper/klippy/extras/ \;
 	install -d debian/afc/etc/klipper/config/extras-readonly
-	for config in afc.cfg canvas.cfg boxturtle.cfg canvas_rfid.cfg; do \
+	for config in afc.cfg boxturtle.cfg canvas_rfid.cfg; do \
 		test -f "/cosmos/meta-opencentauri/recipes-data/klipper-afc-addon/files/$$config"; \
 		install -m 0644 "/cosmos/meta-opencentauri/recipes-data/klipper-afc-addon/files/$$config" debian/afc/etc/klipper/config/extras-readonly/; \
 	done

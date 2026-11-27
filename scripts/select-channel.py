@@ -24,6 +24,7 @@ def packaging_fingerprint():
         root / 'scripts/select-channel.py',
     ]
     paths += sorted((root / 'packages').glob('*/debian/**/*'))
+    paths += sorted((root / 'files').glob('**/*'))
     for path in paths:
         if path.is_file():
             digest.update(path.relative_to(root).as_posix().encode())

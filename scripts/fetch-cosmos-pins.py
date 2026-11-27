@@ -157,6 +157,7 @@ def main():
         "tmc-autotune": recipe_version(root, "tmc-autotune"),
         "cosmos": cosmos_version(root),
     }
+    versions["oc-board-config"] = versions["cosmos"]
     with open("/tmp/package-versions", "w") as handle:
         for name, version in versions.items():
             print(f"version {name}: {version}", flush=True)

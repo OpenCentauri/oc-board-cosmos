@@ -27,6 +27,7 @@ RUN apt-get update \
       python3-dev \
       python3-wheel \
       python3-serial \
+      python3-jinja2 \
       python3-setuptools \
       cython3 \
       dh-python \
@@ -34,5 +35,7 @@ RUN apt-get update \
       curl \
       unzip \
       patch \
+      sudo \
+      ucf \
       libstdc++-14-dev \
  && rm -rf /var/lib/apt/lists/*
