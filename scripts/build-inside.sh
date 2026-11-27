@@ -1,6 +1,13 @@
 #!/bin/bash
 set -euo pipefail
 
+ccache --zero-stats
+report_cache_stats() {
+  ccache --show-stats || true
+  sccache --show-stats || true
+}
+trap report_cache_stats EXIT
+
 python3 "$(dirname "$0")/fetch-cosmos-pins.py" \
   kalico moonraker grumpyscreen fluidd mainsail ustreamer afc tmc-autotune katapult \
   /cosmos/meta-opencentauri

@@ -18,6 +18,10 @@ def packaging_fingerprint():
     paths = [
         root / 'Dockerfile',
         root / 'scripts/fetch-cosmos-pins.py',
+        root / 'scripts/fetch-python-deps.py',
+        root / 'scripts/fetch-mcu-flasher.py',
+        root / 'scripts/fetch-flashtool.py',
+        root / 'scripts/input_cache.py',
         root / 'scripts/build-inside.sh',
         root / 'scripts/build-debs.sh',
         root / 'scripts/stage-apt.sh',

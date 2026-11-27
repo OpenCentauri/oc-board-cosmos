@@ -68,3 +68,29 @@ disconnect briefly, including any attached storage, cameras, and MCUs.
 ## Rebuilds
 
 GitHub Actions polls `OpenCentauri/cosmos` `main` daily and also runs on `workflow_dispatch` and pushes to this repository. A publish is skipped only when both the recorded Cosmos SHA and a fingerprint of the packaging inputs are unchanged.
+
+## Build caches and offline rebuilds
+
+Local builds persist compiler caches, pinned sources, download archives, and Cargo inputs under `~/.cache/oc-board-cosmos` by default. Set `CACHE_DIR` to override this location. GitHub restores the compiler/download/Cargo caches before building and saves a new snapshot only after a successful build.
+
+Warm an exact local Cosmos checkout using a locally built arm64 builder image:
+
+```bash
+COSMOS_DIR="$PWD/../cosmos"
+COSMOS_SHA=$(git -C "$COSMOS_DIR" rev-parse HEAD)
+DOCKER_PULL=0 BUILDER_IMAGE=oc-board-cosmos-builder:local \
+  COSMOS_DIR="$COSMOS_DIR" APT_CHANNEL=nightly PACKAGE_BUILD_NUMBER=0 \
+  bash scripts/build-debs.sh "$COSMOS_SHA"
+```
+
+Then rebuild the same pin without network access:
+
+```bash
+COSMOS_DIR="$PWD/../cosmos"
+COSMOS_SHA=$(git -C "$COSMOS_DIR" rev-parse HEAD)
+OFFLINE=1 BUILDER_IMAGE=oc-board-cosmos-builder:local \
+  COSMOS_DIR="$COSMOS_DIR" APT_CHANNEL=nightly PACKAGE_BUILD_NUMBER=0 \
+  bash scripts/build-debs.sh "$COSMOS_SHA"
+```
+
+Offline mode runs the package container with `--network none` and fails if any required source or download was not cached by an earlier online build. Rebuilding the builder image itself still requires network access unless its base image and APT inputs are managed separately.

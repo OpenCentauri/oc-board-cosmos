@@ -40,6 +40,20 @@ jobs:
         if: steps.source.outputs.build == 'true'
         id: image
         run: bash scripts/build-builder.sh
+      - name: Restore build caches
+        if: steps.source.outputs.build == 'true'
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            ${{ runner.temp }}/oc-board-cosmos/ccache
+            ${{ runner.temp }}/oc-board-cosmos/sccache
+            ${{ runner.temp }}/oc-board-cosmos/downloads
+            ${{ runner.temp }}/oc-board-cosmos/cargo/registry
+            ${{ runner.temp }}/oc-board-cosmos/cargo/git
+          key: build-cache-${{ runner.os }}-${{ runner.arch }}-${{ inputs.channel }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            build-cache-${{ runner.os }}-${{ runner.arch }}-${{ inputs.channel }}-
+            build-cache-${{ runner.os }}-${{ runner.arch }}-
       - name: Build packages and stage channel
         if: steps.source.outputs.build == 'true'
         env:
@@ -50,7 +64,24 @@ jobs:
           COSMOS_RELEASE_ID: ${{ steps.source.outputs.release_id }}
           COSMOS_RELEASE_TAG: ${{ steps.source.outputs.tag }}
           PACKAGE_BUILD_NUMBER: ${{ github.run_number }}
+          CACHE_DIR: ${{ runner.temp }}/oc-board-cosmos
         run: bash scripts/build-debs.sh "$COSMOS_SHA"
+      - name: Make build caches readable by the runner
+        if: success() && steps.source.outputs.build == 'true'
+        continue-on-error: true
+        run: sudo chown -R "$(id -u):$(id -g)" "${{ runner.temp }}/oc-board-cosmos"
+      - name: Save build caches after a successful build
+        if: success() && steps.source.outputs.build == 'true'
+        continue-on-error: true
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            ${{ runner.temp }}/oc-board-cosmos/ccache
+            ${{ runner.temp }}/oc-board-cosmos/sccache
+            ${{ runner.temp }}/oc-board-cosmos/downloads
+            ${{ runner.temp }}/oc-board-cosmos/cargo/registry
+            ${{ runner.temp }}/oc-board-cosmos/cargo/git
+          key: build-cache-${{ runner.os }}-${{ runner.arch }}-${{ inputs.channel }}-${{ github.run_id }}-${{ github.run_attempt }}
       - name: Publish channel without replacing other channels
         if: steps.source.outputs.build == 'true'
         uses: peaceiris/actions-gh-pages@v4

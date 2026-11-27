@@ -10,8 +10,9 @@ import shutil
 import subprocess
 import sys
 import tarfile
-import urllib.request
 import zipfile
+
+from input_cache import download
 
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -53,8 +54,7 @@ def requirement_version(requirements, dist):
     # allowed by the selected upstream range.
     upper = upper[0]
     lower = lower[0] if lower else None
-    data = json.load(urllib.request.urlopen(
-        f"https://pypi.org/pypi/{dist}/json", timeout=30))
+    data = json.loads(download(f"https://pypi.org/pypi/{dist}/json"))
     candidates = []
     for value in data["releases"]:
         if re.fullmatch(r"[0-9]+(?:\.[0-9]+)*(?:[A-Za-z0-9.+!-]*)", value):
@@ -90,15 +90,15 @@ def safe_extract(archive, dest):
 
 
 def fetch_sdist(dist, version, dest):
-    data = json.load(urllib.request.urlopen(
-        f"https://pypi.org/pypi/{dist}/{version}/json", timeout=30))
+    data = json.loads(download(f"https://pypi.org/pypi/{dist}/{version}/json"))
     sdist = next((item for item in data["urls"]
                    if item["packagetype"] == "sdist"), None)
     if not sdist:
         raise SystemExit(f"no sdist for {dist} {version}")
     archive = os.path.join(OUT, sdist["filename"])
     os.makedirs(OUT, exist_ok=True)
-    urllib.request.urlretrieve(sdist["url"], archive)
+    with open(archive, "wb") as handle:
+        handle.write(download(sdist["url"]))
     got = hashlib.sha256(open(archive, "rb").read()).hexdigest()
     if got != sdist["digests"]["sha256"]:
         raise SystemExit(

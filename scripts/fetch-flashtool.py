@@ -32,8 +32,7 @@ if not uri or not rev:
     raise SystemExit(f'Missing Katapult git pin in {recipe}')
 dest = '/upstream/flashtool'
 print(f'pin flashtool: {version} https://{uri.group(1)} @ {rev.group(1)}', flush=True)
-subprocess.check_call(['git', 'clone', 'https://' + uri.group(1), dest])
-subprocess.check_call(['git', '-C', dest, 'checkout', '--detach', rev.group(1)])
+parser['checkout_git']('https://' + uri.group(1), rev.group(1), dest, 'flashtool')
 for patch in re.findall(r'file://([^;\s\"]+\.patch)', text):
     path = (recipe.parent / 'files' / patch).resolve()
     subprocess.check_call(['patch', '-d', dest, '-p1', '-i', str(path)])

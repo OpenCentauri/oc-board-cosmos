@@ -25,6 +25,8 @@ RUN apt-get update \
       quilt \
       git \
       ca-certificates \
+      ccache \
+      sccache \
       python3 \
       python3-all \
       python3-dev \
@@ -41,4 +43,8 @@ RUN apt-get update \
       sudo \
       ucf \
       libstdc++-14-dev \
+ && ln -sf ../../bin/ccache /usr/lib/ccache/arm-none-eabi-gcc \
  && rm -rf /var/lib/apt/lists/*
+
+ENV PATH="/usr/lib/ccache:${PATH}" \
+    RUSTC_WRAPPER="sccache"

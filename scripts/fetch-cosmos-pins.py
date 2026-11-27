@@ -17,8 +17,11 @@ import glob
 import hashlib
 import os
 import re
+import shutil
 import subprocess
 import sys
+
+from input_cache import download, offline
 
 
 def version_key(path):
@@ -73,6 +76,32 @@ def recipe_text(root, name):
     return recipe, text, recipe_version(root, name)
 
 
+def checkout_git(url, rev, dest, name, submodules=False):
+    """Reuse a cached checkout when possible, without silently using another pin."""
+    if not os.path.exists(os.path.join(dest, ".git")):
+        if offline():
+            sys.exit(f"offline source missing: {name}@{rev}; run an online build first")
+        subprocess.check_call(["git", "clone", url, dest])
+    subprocess.check_call(["git", "-C", dest, "remote", "set-url", "origin", url])
+    present = subprocess.run(
+        ["git", "-C", dest, "cat-file", "-e", f"{rev}^{{commit}}"], check=False).returncode == 0
+    if not present:
+        if offline():
+            sys.exit(f"offline source missing: {name}@{rev}; run an online build first")
+        subprocess.check_call(["git", "-C", dest, "fetch", "origin", rev])
+    subprocess.check_call(["git", "-C", dest, "checkout", "--force", "--detach", rev])
+    subprocess.check_call(["git", "-C", dest, "reset", "--hard", rev])
+    subprocess.check_call(["git", "-C", dest, "clean", "-fdx"])
+    if submodules:
+        subprocess.check_call(["git", "-C", dest, "submodule", "sync", "--recursive"])
+        command = ["git", "-C", dest, "submodule", "update", "--init", "--recursive", "--force"]
+        if offline():
+            command.append("--no-fetch")
+        subprocess.check_call(command)
+        subprocess.check_call(
+            ["git", "-C", dest, "submodule", "foreach", "--recursive", "git", "clean", "-fdx"])
+
+
 def fetch_git(root, name):
     """Clone the recipe's git pin, check out SRCREV, and apply files/*.patch.
 
@@ -86,13 +115,10 @@ def fetch_git(root, name):
         sys.exit(f"missing git pin in {recipe}")
     dest = f"/upstream/{name}"
     print(f"pin {name}: {version} https://{uri.group(1)} @ {rev.group(1)}", flush=True)
-    subprocess.check_call(["git", "clone", f"https://{uri.group(1)}", dest])
-    subprocess.check_call(["git", "-C", dest, "checkout", "--detach", rev.group(1)])
+    checkout_git(f"https://{uri.group(1)}", rev.group(1), dest, name, name == "grumpyscreen")
     got = subprocess.check_output(["git", "-C", dest, "rev-parse", "HEAD"], text=True).strip()
     if got.lower() != rev.group(1).lower():
         sys.exit(f"{name} revision mismatch: got {got}, expected {rev.group(1)}")
-    if name == "grumpyscreen":
-        subprocess.check_call(["git", "-C", dest, "submodule", "update", "--init", "--recursive"])
     files_dir = os.path.join(os.path.dirname(recipe), "files")
     for patch_file in sorted(glob.glob(os.path.join(files_dir, "*.patch"))):
         subprocess.check_call(["patch", "-d", dest, "-p1", "-i", patch_file])
@@ -113,10 +139,12 @@ def fetch_zip(root, name):
     dest = f"/upstream/{name}"
     archive = f"/tmp/{name}.zip"
     print(f"pin {name}: {version} {url}", flush=True)
-    subprocess.check_call(["curl", "-fsSL", "-o", archive, url])
+    with open(archive, "wb") as handle:
+        handle.write(download(url))
     got = hashlib.sha256(open(archive, "rb").read()).hexdigest()
     if got != digest.group(1):
         sys.exit(f"{name} sha256 mismatch for {url}: {got} != {digest.group(1)}")
+    shutil.rmtree(dest, ignore_errors=True)
     os.makedirs(dest, exist_ok=True)
     subprocess.check_call(["unzip", "-q", archive, "-d", dest])
 
