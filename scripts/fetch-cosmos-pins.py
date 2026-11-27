@@ -160,6 +160,7 @@ def main():
         "cosmos-mcu-flash": recipe_version(root, "kalico-firmware-bed"),
         "cosmos": cosmos_version(root),
     }
+    versions["oc-board-config"] = versions["cosmos"]
     with open("/tmp/package-versions", "w") as handle:
         for name, version in versions.items():
             print(f"version {name}: {version}", flush=True)

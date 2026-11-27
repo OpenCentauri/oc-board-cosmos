@@ -64,7 +64,7 @@ class ServicePackagingTests(unittest.TestCase):
         dockerfile = read('Dockerfile')
         cosmos = read('packages/cosmos/debian/control')
         self.assertIn('katapult', build)
-        self.assertIn('cosmos-mcu-flash cosmos', build)
+        self.assertIn('cosmos-mcu-flash oc-board-config cosmos', build)
         self.assertIn('"cosmos-mcu-flash":', fetch)
         self.assertIn('gcc-arm-none-eabi', dockerfile)
         self.assertIn('libnewlib-arm-none-eabi', dockerfile)

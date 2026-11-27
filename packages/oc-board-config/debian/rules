@@ -1,0 +1,35 @@
+#!/usr/bin/make -f
+%:
+	dh $@
+
+COSMOS_KLIPPER = /cosmos/meta-opencentauri/recipes-apps/klipper/files
+OC_BOARD = /src/files/centauri-carbon-1-ocboard
+COMMON = debian/oc-board-config-common
+CB2 = debian/oc-board-config-cb2
+
+override_dh_gencontrol:
+	dh_gencontrol -- \
+		-Vklipper:Version="$(shell dpkg-deb -f /src/out/klipper_*.deb Version)" \
+		-Vafc:Version="$(shell dpkg-deb -f /src/out/afc_*.deb Version)"
+
+override_dh_auto_install:
+	install -d $(COMMON)/etc/klipper/config/klipper-readonly
+	install -d $(COMMON)/usr/share/oc-board-config
+	install -m 0644 $(COSMOS_KLIPPER)/printer.cfg $(COMMON)/usr/share/oc-board-config/printer.cfg
+	for config in client.cfg shell.cfg shared-macros.cfg calibration.cfg screen.cfg kamp.cfg; do \
+		install -m 0644 $(COSMOS_KLIPPER)/$$config $(COMMON)/etc/klipper/config/klipper-readonly/; \
+	done
+	install -m 0644 $(COSMOS_KLIPPER)/centauri-carbon-1/macros.cfg $(COMMON)/etc/klipper/config/klipper-readonly/ymacros.cfg
+	install -m 0644 $(OC_BOARD)/machine.cfg $(COMMON)/etc/klipper/config/klipper-readonly/machine.cfg
+	install -d $(COMMON)/etc/klipper/config/extras-readonly
+	install -m 0644 $(OC_BOARD)/canvas-common.cfg $(COMMON)/etc/klipper/config/extras-readonly/
+	install -m 0644 $(COSMOS_KLIPPER)/centauri-carbon-1/canvas-toolhead.cfg $(COMMON)/etc/klipper/config/extras-readonly/
+
+	install -d $(CB2)/etc/klipper/config/klipper-readonly
+	install -m 0644 $(OC_BOARD)/hosts/btt-cb2.cfg $(CB2)/etc/klipper/config/klipper-readonly/zcb2.cfg
+	install -d $(CB2)/etc/klipper/config/extras-readonly
+	install -m 0644 $(OC_BOARD)/hosts/btt-cb2-canvas.cfg $(CB2)/etc/klipper/config/extras-readonly/canvas.cfg
+	install -d $(CB2)/usr/lib/klipper
+	install -m 0755 $(OC_BOARD)/hosts/btt-cb2-reset-usb.sh $(CB2)/usr/lib/klipper/reset-usb.sh
+	install -d $(CB2)/etc/sudoers.d
+	install -m 0440 $(OC_BOARD)/hosts/btt-cb2.sudoers $(CB2)/etc/sudoers.d/oc-board-config-cb2

@@ -54,7 +54,7 @@ class CosmosAddonTests(unittest.TestCase):
 
         self.assertIn("/usr/share/klipper/klippy/extras", afc_rules)
         self.assertIn("! -name '__init__.py'", afc_rules)
-        for config in ("afc.cfg", "canvas.cfg", "boxturtle.cfg", "canvas_rfid.cfg"):
+        for config in ("afc.cfg", "boxturtle.cfg", "canvas_rfid.cfg"):
             self.assertIn(config, afc_rules)
         self.assertIn("/etc/klipper/config/extras-readonly", afc_rules)
 

@@ -1,0 +1,13 @@
+#!/bin/sh
+set -e
+
+case "$1" in
+    configure)
+        ucf --debconf-ok \
+            /usr/share/oc-board-config/printer.cfg \
+            /etc/klipper/config/printer.cfg
+        ;;
+esac
+
+#DEBHELPER#
+exit 0

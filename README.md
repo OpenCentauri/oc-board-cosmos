@@ -13,11 +13,13 @@ This repository checks out [OpenCentauri/cosmos](https://github.com/OpenCentauri
 | `moonraker` | Moonraker plus the Cosmos patches and native systemd service. |
 | `fluidd` | Static web UI. |
 | `mainsail` | Static web UI. |
-| `afc` | AFC-Klipper-Add-On extras and Cosmos readonly configuration files. |
+| `afc` | AFC-Klipper-Add-On extras and optional AFC/BoxTurtle/RFID configuration files. |
 | `tmc-autotune` | TMC stepper autotuning extra and motor database. |
 | `addon` | Cosmos addon manager with systemd service restarts. |
 | `cosmos-config` | `cosmos.conf` manager, generated fragments, and daemon prestart helpers. |
 | `cosmos-mcu-flash` | Prebuilt CC1 bed/toolhead/Canvas Kalico and Katapult payloads with gated flash units. |
+| `oc-board-config-common` | Shared CC1 + OpenCentauri board printer configuration and optional Canvas payloads. |
+| `oc-board-config-cb2` | CB2 host paths, optional Canvas wrapper, and the manual `RESET_USB` recovery helper. |
 | `cosmos` | Metapackage depending on the packages above. |
 
 `cosmos-config` intentionally depends on the separately maintained `oc-board-config-common` package. The `cosmos` metapackage selects `oc-board-config-cb2` for the tested BTT CB2 host. Together they provide `printer.cfg` and the static readonly configuration under `/etc/klipper/config`; this repository does not generate those static files.
@@ -52,6 +54,16 @@ sudo apt install cosmos
 ```
 
 The archive is unsigned for now. `trusted=yes` is required.
+
+## Configuration
+
+The `cosmos` metapackage currently selects `oc-board-config-cb2`. The common
+package creates `/etc/klipper/config/printer.cfg` from its template with `ucf`;
+local changes default to being retained on upgrade, and the file survives package
+removal and purge.
+
+On CB2, `RESET_USB` manually rebinds the USB controller. All USB devices
+disconnect briefly, including any attached storage, cameras, and MCUs.
 
 ## Rebuilds
 

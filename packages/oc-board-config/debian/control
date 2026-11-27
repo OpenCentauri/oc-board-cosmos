@@ -1,0 +1,26 @@
+Source: oc-board-config
+Section: misc
+Priority: optional
+Maintainer: OpenCentauri Project <noreply@opencentauri.github.io>
+Build-Depends: debhelper-compat (= 13)
+Standards-Version: 4.7.0
+
+Package: oc-board-config-common
+Architecture: all
+Depends: ${misc:Depends}, ucf
+Replaces: klipper
+Breaks: klipper (<< ${klipper:Version})
+Description: Shared CC1 OpenCentauri board Klipper configuration
+ Static printer and read-only configuration for a Centauri Carbon 1 using
+ the OpenCentauri board. This package is independent of the host SBC.
+
+Package: oc-board-config-cb2
+Architecture: all
+Depends: ${misc:Depends}, oc-board-config-common, afc, sudo
+Provides: oc-board-config-host
+Conflicts: oc-board-config-host
+Replaces: oc-board-config-host, afc
+Breaks: afc (<< ${afc:Version})
+Description: BTT CB2 host integration for OC board Klipper configuration
+ Device paths, optional Canvas integration, and the manual USB recovery
+ helper for the BigTreeTech CB2. Only one host configuration may be installed.

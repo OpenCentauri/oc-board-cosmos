@@ -32,6 +32,8 @@ build_pkg() {
   cp "$parent/"*.deb /src/out/
 }
 
-for name in fluidd mainsail moonraker klipper grumpyscreen ustreamer afc tmc-autotune mcu-flasher flashtool addon cosmos-config cosmos-mcu-flash cosmos; do
+for name in fluidd mainsail moonraker klipper grumpyscreen ustreamer afc tmc-autotune mcu-flasher flashtool addon cosmos-config cosmos-mcu-flash oc-board-config cosmos; do
   build_pkg "$name"
 done
+
+OC_BOARD_DEB_DIR=/src/out python3 -m unittest tests.test_oc_board_built -v
